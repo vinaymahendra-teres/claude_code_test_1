@@ -30,3 +30,19 @@ export const fmtDate = (iso: string | null | undefined, { showYear = false } = {
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   return `${d.getDate()} ${months[d.getMonth()]}${showYear ? " " + d.getFullYear() : ""}`;
 };
+
+// Anchored to the seed-data baseline so the prototype's relative dates stay readable.
+const TODAY_ANCHOR = "2026-05-24";
+
+export const fmtRelative = (iso: string | null | undefined) => {
+  if (!iso) return "—";
+  const today = new Date(TODAY_ANCHOR);
+  const d = new Date(iso);
+  const days = Math.round((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  if (days === 0) return "Today";
+  if (days === 1) return "Tomorrow";
+  if (days === -1) return "Yesterday";
+  if (days > 1 && days < 7) return `In ${days} days`;
+  if (days < -1 && days > -7) return `${-days}d ago`;
+  return fmtDate(iso);
+};

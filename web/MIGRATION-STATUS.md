@@ -6,12 +6,18 @@ The original prototype at [`../app/`](../app/) is ~6,000 lines of Babel-in-brows
 
 | Layer | Source (prototype) | Target (here) |
 |------|---------------------|---------------|
-| Schema | `app/data/*.json` | `supabase/migrations/0001_initial_schema.sql` |
+| Schema | `app/data/*.json` | `supabase/migrations/0001_initial_schema.sql` (applied + seeded with ~100 rows) |
 | Seed | inline data block | `scripts/seed.ts` (reads from `../app/data/*.json`) |
 | Design tokens | inline `<style>` in `index.html` | `app/globals.css` |
-| Layout shell | desktop frame + phone mockup | `app/layout.tsx` + `app/page.tsx` |
+| Layout shell | desktop frame + phone mockup | `app/layout.tsx` + `components/PhoneShell.tsx` (reusable, takes left/right panel overrides) |
+| Status helpers | `window.statusColor` / `window.statusLabel` | `lib/status.ts` |
 | Money / date formatters | `app/src/data.jsx` (`window.fmtMoney` etc.) | `lib/format.ts` |
+| Icon set | `app/src/icons.jsx` (`window.Icon`) | `components/Icon.tsx` — 40+ icons, TSX |
+| UI primitives (server-safe) | `app/src/ui.jsx` | `components/ui.tsx` — Card, Pill, StatusPill, Avatar, CakeArt, Field, SectionHeader, StatTile |
+| UI primitives (interactive) | same | `components/ui-client.tsx` — Button, IconButton, ListRow, TextInput, SegmentedControl, Toggle, Sheet |
 | Home (KPIs) | `app/src/screens/Home.jsx` | `app/page.tsx` — Server Component, live Supabase queries for week revenue, pending balance, today's bakes, tomorrow, low stock |
+| Orders list | `app/src/screens/Orders.jsx` | `app/orders/page.tsx` — Server Component, tab via search params, grouped by delivery date |
+| Order detail | same | `app/orders/[id]/page.tsx` — Server Component, joins customer + recipe, shows status tracker / theme / delivery / payment with UTR + cold-chain |
 
 ## What's queued 🟡
 
@@ -19,7 +25,6 @@ The remaining prototype screens haven't been ported. Each is a focused migration
 
 | Prototype source | Target | Notes |
 |------------------|--------|-------|
-| `Orders.jsx` | `app/orders/page.tsx` + `app/orders/[id]/page.tsx` | Server-side list + detail. UTR / VPA / paymentMode UI already designed — preserve it. |
 | `NewOrder.jsx` | `app/orders/new/page.tsx` | Six-step flow. Capacity guardrail + festival blocks become SQL joins to `orders` + `blocked_dates`. |
 | `Customers.jsx` | `app/customers/page.tsx` + `app/customers/[id]/page.tsx` | DPDP consent toggle becomes a Server Action that updates `customers.marketing_consent`. |
 | `Production.jsx` | `app/bakes/page.tsx` | Week schedule + oven plan. |
