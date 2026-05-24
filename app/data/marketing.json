@@ -1,0 +1,74 @@
+{
+  "campaigns": [
+    {
+      "id": "cam-mango-may",
+      "name": "Mango Season Special",
+      "status": "live",
+      "channels": ["Instagram Reels", "WhatsApp Broadcast"],
+      "audience": "Past 12mo customers (38)",
+      "sent": "2026-05-20",
+      "endsOn": "2026-06-15",
+      "subject": "Alphonso is back. Limited slots — 30 only.",
+      "preview": "We saved the best ones for you. Pre-book mango pistachio + alphonso cheesecake before Monday.",
+      "openRate": 0.62,
+      "clickRate": 0.34,
+      "orders": 7,
+      "revenue": 24800,
+      "spend": 1500
+    },
+    {
+      "id": "cam-monsoon-bento",
+      "name": "Monsoon Bento Club",
+      "status": "draft",
+      "channels": ["Instagram Story", "WhatsApp"],
+      "audience": "Customers in 5km radius (29)",
+      "sent": null,
+      "endsOn": "2026-06-30",
+      "subject": "Rainy evenings deserve a bento.",
+      "preview": "Two-bites of warmth for ₹599. Delivered in 90 mins, rain or shine.",
+      "openRate": 0,
+      "clickRate": 0,
+      "orders": 0,
+      "revenue": 0,
+      "spend": 0
+    },
+    {
+      "id": "cam-mothers-day",
+      "name": "Mother's Day Pre-orders",
+      "status": "completed",
+      "channels": ["Instagram Post", "WhatsApp Broadcast"],
+      "audience": "All customers (52)",
+      "sent": "2026-04-28",
+      "endsOn": "2026-05-10",
+      "subject": "She's the reason. Make it taste like one.",
+      "preview": "Three curated cakes for Mother's Day. Order by May 8.",
+      "openRate": 0.78,
+      "clickRate": 0.46,
+      "orders": 14,
+      "revenue": 54200,
+      "spend": 800
+    },
+    {
+      "id": "cam-referral",
+      "name": "Refer a friend — get a bento",
+      "status": "live",
+      "channels": ["WhatsApp", "Email"],
+      "audience": "VIP + Recurring (18)",
+      "sent": "2026-05-01",
+      "endsOn": "2026-07-31",
+      "subject": "Send us your favourite people.",
+      "preview": "Refer a friend, you both get a free bento on next order.",
+      "openRate": 0.83,
+      "clickRate": 0.51,
+      "orders": 3,
+      "revenue": 14600,
+      "spend": 0
+    }
+  ],
+  "templates": [
+    { "id": "t-new", "name": "Welcome new follower", "preview": "Hey {name}! Saw you started following — we make custom cakes in {area}…" },
+    { "id": "t-birthday", "name": "Birthday reminder (auto)", "preview": "{name}, {event} is in 7 days. Lock your cake slot today." },
+    { "id": "t-payment", "name": "Payment reminder", "preview": "Quick reminder — balance ₹{balance} on {orderTitle} due {date}." },
+    { "id": "t-thanks", "name": "Post-delivery thank you", "preview": "We hope {event} was sweet. A tag on @tieredcake.co means the world." }
+  ]
+}

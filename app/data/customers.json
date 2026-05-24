@@ -1,0 +1,334 @@
+[
+  {
+    "id": "c-001",
+    "name": "Aanya Reddy",
+    "phone": "+91 98765 43210",
+    "instagram": "@aanya.celebrates",
+    "area": "Jubilee Hills",
+    "tags": [
+      "VIP",
+      "Eggless"
+    ],
+    "since": "2023-04-12",
+    "orderCount": 8,
+    "lifetimeValue": 42500,
+    "lastOrder": "2026-05-18",
+    "preferredFlavors": [
+      "Pistachio Rose",
+      "Belgian Dark"
+    ],
+    "notes": "Daughter's bday every March 14. Two kids — vanilla allergy on younger.",
+    "avatarTone": "rose",
+    "marketingConsent": "Y",
+    "consentDate": "2023-04-15",
+    "occasions": [
+      {
+        "kind": "kid-birthday",
+        "date": "2027-03-14",
+        "label": "Daughter's birthday (Anaya)"
+      },
+      {
+        "kind": "anniversary",
+        "date": "2026-06-08",
+        "label": "Wedding anniversary"
+      }
+    ]
+  },
+  {
+    "id": "c-002",
+    "name": "Vikram Iyer",
+    "phone": "+91 99887 65432",
+    "instagram": "@vikiyer",
+    "area": "Banjara Hills",
+    "tags": [
+      "Corporate"
+    ],
+    "since": "2024-01-08",
+    "orderCount": 5,
+    "lifetimeValue": 68000,
+    "lastOrder": "2026-05-09",
+    "preferredFlavors": [
+      "Salted Caramel",
+      "Coffee Hazelnut"
+    ],
+    "notes": "Orders for office events. NetSuite finance team — invoices to AP.",
+    "avatarTone": "sage",
+    "marketingConsent": "Y",
+    "consentDate": "2024-01-10",
+    "occasions": [
+      {
+        "kind": "milestone",
+        "date": "2026-09-15",
+        "label": "Company founders' day"
+      }
+    ]
+  },
+  {
+    "id": "c-003",
+    "name": "Meher Khanna",
+    "phone": "+91 91234 56789",
+    "instagram": "@meher.k",
+    "area": "Madhapur",
+    "tags": [
+      "Eggless",
+      "Recurring"
+    ],
+    "since": "2023-09-22",
+    "orderCount": 12,
+    "lifetimeValue": 38400,
+    "lastOrder": "2026-05-22",
+    "preferredFlavors": [
+      "Lemon Blueberry",
+      "Tres Leches"
+    ],
+    "notes": "Sends thoughtful DMs. Likes pastel palette, dislikes red.",
+    "avatarTone": "caramel",
+    "marketingConsent": "Y",
+    "consentDate": "2024-08-22",
+    "occasions": [
+      {
+        "kind": "kid-birthday",
+        "date": "2026-06-05",
+        "label": "Son's birthday (Reyansh)"
+      },
+      {
+        "kind": "birthday",
+        "date": "2026-11-22",
+        "label": "Own birthday"
+      }
+    ]
+  },
+  {
+    "id": "c-004",
+    "name": "Rohan Mehta",
+    "phone": "+91 97543 21098",
+    "instagram": "@rohanm",
+    "area": "Gachibowli",
+    "tags": [
+      "New"
+    ],
+    "since": "2026-04-30",
+    "orderCount": 1,
+    "lifetimeValue": 4200,
+    "lastOrder": "2026-05-02",
+    "preferredFlavors": [
+      "Belgian Dark"
+    ],
+    "notes": "Friend of Aanya. First order was a bento for proposal.",
+    "avatarTone": "rose",
+    "marketingConsent": "N",
+    "consentDate": null,
+    "occasions": []
+  },
+  {
+    "id": "c-005",
+    "name": "Sara Joseph",
+    "phone": "+91 98123 45670",
+    "instagram": "@sara.joseph",
+    "area": "Kondapur",
+    "tags": [
+      "Recurring"
+    ],
+    "since": "2024-07-11",
+    "orderCount": 6,
+    "lifetimeValue": 29800,
+    "lastOrder": "2026-04-28",
+    "preferredFlavors": [
+      "Red Velvet",
+      "Coffee Hazelnut"
+    ],
+    "notes": "Mom of twins. Always asks for two flavors split.",
+    "avatarTone": "sage",
+    "marketingConsent": "Y",
+    "consentDate": "2024-02-14",
+    "occasions": [
+      {
+        "kind": "birthday",
+        "date": "2026-05-30",
+        "label": "Own birthday"
+      }
+    ]
+  },
+  {
+    "id": "c-006",
+    "name": "Karthik Rao",
+    "phone": "+91 90123 45678",
+    "instagram": "@karthikrao",
+    "area": "Hitech City",
+    "tags": [
+      "Corporate"
+    ],
+    "since": "2025-02-14",
+    "orderCount": 3,
+    "lifetimeValue": 51000,
+    "lastOrder": "2026-03-19",
+    "preferredFlavors": [
+      "Salted Caramel"
+    ],
+    "notes": "Bulk orders for product launches. 48hr lead time ok.",
+    "avatarTone": "caramel",
+    "marketingConsent": "Y",
+    "consentDate": "2025-06-03",
+    "occasions": [
+      {
+        "kind": "anniversary",
+        "date": "2026-06-15",
+        "label": "Wedding anniversary"
+      }
+    ]
+  },
+  {
+    "id": "c-007",
+    "name": "Priya Subramanian",
+    "phone": "+91 99000 11223",
+    "instagram": "@priya.s",
+    "area": "Jubilee Hills",
+    "tags": [
+      "VIP",
+      "Eggless"
+    ],
+    "since": "2023-01-19",
+    "orderCount": 14,
+    "lifetimeValue": 96500,
+    "lastOrder": "2026-05-15",
+    "preferredFlavors": [
+      "Pistachio Rose",
+      "Lemon Blueberry",
+      "Tres Leches"
+    ],
+    "notes": "Wedding planner — refers many clients. Send thank-you cupcakes quarterly.",
+    "avatarTone": "rose",
+    "marketingConsent": "Y",
+    "consentDate": "2023-08-19",
+    "occasions": [
+      {
+        "kind": "birthday",
+        "date": "2026-06-10",
+        "label": "Husband's birthday"
+      },
+      {
+        "kind": "milestone",
+        "date": "2026-12-02",
+        "label": "Mother's 60th"
+      }
+    ]
+  },
+  {
+    "id": "c-008",
+    "name": "Aditya Shah",
+    "phone": "+91 98456 78901",
+    "instagram": "@adi.shah",
+    "area": "Kukatpally",
+    "tags": [
+      "New"
+    ],
+    "since": "2026-05-10",
+    "orderCount": 1,
+    "lifetimeValue": 3800,
+    "lastOrder": "2026-05-10",
+    "preferredFlavors": [
+      "Belgian Dark"
+    ],
+    "notes": "Found us on Instagram. Younger crowd.",
+    "avatarTone": "sage",
+    "marketingConsent": "N",
+    "consentDate": null,
+    "occasions": []
+  },
+  {
+    "id": "c-009",
+    "name": "Nisha Pillai",
+    "phone": "+91 91111 22233",
+    "instagram": "@nisha.p",
+    "area": "Begumpet",
+    "tags": [
+      "Recurring"
+    ],
+    "since": "2024-11-05",
+    "orderCount": 4,
+    "lifetimeValue": 22000,
+    "lastOrder": "2026-05-20",
+    "preferredFlavors": [
+      "Coffee Hazelnut",
+      "Red Velvet"
+    ],
+    "notes": "Husband's bday May 25 every year — auto remind!",
+    "avatarTone": "caramel",
+    "marketingConsent": "Y",
+    "consentDate": "2025-03-09",
+    "occasions": [
+      {
+        "kind": "birthday",
+        "date": "2027-02-18",
+        "label": "Own birthday"
+      }
+    ]
+  },
+  {
+    "id": "c-010",
+    "name": "Tara Bhatia",
+    "phone": "+91 99876 54321",
+    "instagram": "@tara.bhatia",
+    "area": "Film Nagar",
+    "tags": [
+      "VIP"
+    ],
+    "since": "2023-06-30",
+    "orderCount": 9,
+    "lifetimeValue": 71200,
+    "lastOrder": "2026-04-11",
+    "preferredFlavors": [
+      "Pistachio Rose",
+      "Salted Caramel"
+    ],
+    "notes": "Influencer — tags us. Tier 3 referral source.",
+    "avatarTone": "rose",
+    "marketingConsent": "N",
+    "consentDate": null,
+    "occasions": []
+  },
+  {
+    "id": "c-011",
+    "name": "Imran Ali",
+    "phone": "+91 90909 80808",
+    "instagram": "@imran.bakes",
+    "area": "Tolichowki",
+    "tags": [
+      "Eggless"
+    ],
+    "since": "2025-08-14",
+    "orderCount": 2,
+    "lifetimeValue": 9500,
+    "lastOrder": "2026-02-08",
+    "preferredFlavors": [
+      "Tres Leches"
+    ],
+    "notes": "Strictly eggless household.",
+    "avatarTone": "sage",
+    "marketingConsent": "N",
+    "consentDate": null,
+    "occasions": []
+  },
+  {
+    "id": "c-012",
+    "name": "Divya Menon",
+    "phone": "+91 98989 76543",
+    "instagram": "@divs.menon",
+    "area": "Manikonda",
+    "tags": [
+      "New"
+    ],
+    "since": "2026-05-15",
+    "orderCount": 1,
+    "lifetimeValue": 5400,
+    "lastOrder": "2026-05-15",
+    "preferredFlavors": [
+      "Lemon Blueberry"
+    ],
+    "notes": "Referred by Priya S.",
+    "avatarTone": "caramel",
+    "marketingConsent": "N",
+    "consentDate": null,
+    "occasions": []
+  }
+]

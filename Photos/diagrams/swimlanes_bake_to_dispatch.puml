@@ -1,0 +1,67 @@
+@startuml swimlanes_bake_to_dispatch
+title Bake-plan → Dispatch workflow (two-operator ownership)\nAMomentWithACake home bakery — Hyderabad
+
+skinparam backgroundColor #FAFAFA
+skinparam ActivityDiamondBackgroundColor #FFF8DC
+skinparam partitionPadding 8
+skinparam roundCorner 8
+skinparam shadowing false
+skinparam ArrowColor #444
+
+|#FBE8E8|Sh (intake · planning · dispatch)|
+start
+:Receive order\n(WhatsApp / IG DM / Form);
+:Quote + slot offer;
+:Confirm + UPI deposit link;
+if (Deposit received within 6h?) then (yes)
+  :Mark Orders.deposit_received = Y;
+  :Add to Capacity Calendar;
+else (no)
+  :Auto-cancel hold;
+  stop
+endif
+
+|#E8EEFB|S (production · kitchen)|
+:Pull bake-plan card\n(`bake_plan_generator.gs`);
+:T-12h cold prep\n(butter, eggs, ganache base);
+:Scale + mix;
+fork
+  :Oven bake\n(40 min @ 170°C);
+fork again
+  :Bomboloni fry\n(gas hob + chimney);
+end fork
+:Cool on rack;
+
+|#F4F4F4|Carry corridor (NEUTRAL)|
+:Cover tray (sealed);
+:Carry → Studio\n(~25–30 ft, 2 doorways);
+note right
+  No simultaneous family
+  cooking during carry.
+  No return flow allowed.
+end note
+
+|#E8F3E8|S (studio · decorate · finish)|
+:Cool to set point;
+:Decorate / finish;
+if (Quality check pass?) then (yes)
+  :Mark ready_to_pack = Y;
+else (rework needed)
+  :Scrap → log waste\n(no return to kitchen);
+  stop
+endif
+
+|#FBE8E8|Sh (intake · planning · dispatch)|
+:Pack + label\n(allergen + storage instructions);
+:Update Orders.dispatched_at;
+if (Pickup or delivery?) then (pickup)
+  :Notify customer "ready";
+  :Hand off at front door;
+else (delivery)
+  :Book Porter / Borzo / rider;
+  :Hand off to rider;
+endif
+:T+2 trigger\n`feedback_request.gs`;
+stop
+
+@enduml

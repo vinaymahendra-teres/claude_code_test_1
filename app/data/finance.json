@@ -1,0 +1,365 @@
+{
+  "expenses": [
+    {
+      "id": "e-301",
+      "date": "2026-05-23",
+      "vendor": "Nature's Basket",
+      "category": "Ingredients",
+      "amount": 980,
+      "method": "UPI",
+      "note": "Fresh blueberries + lemons",
+      "receipt": true,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "526018159083",
+      "payeeVpa": "naturesbasket@hdfcbank"
+    },
+    {
+      "id": "e-300",
+      "date": "2026-05-22",
+      "vendor": "Happy Hens",
+      "category": "Ingredients",
+      "amount": 432,
+      "method": "UPI",
+      "note": "36 eggs free-range",
+      "receipt": true,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "016613186091",
+      "payeeVpa": "happyhens@oksbi"
+    },
+    {
+      "id": "e-299",
+      "date": "2026-05-21",
+      "vendor": "Epigamia",
+      "category": "Ingredients",
+      "amount": 640,
+      "method": "UPI",
+      "note": "Greek yogurt 2kg",
+      "receipt": false,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "390996030824",
+      "payeeVpa": "epigamia@ybl"
+    },
+    {
+      "id": "e-298",
+      "date": "2026-05-20",
+      "vendor": "DMart",
+      "category": "Ingredients",
+      "amount": 2160,
+      "method": "Card",
+      "note": "Butter 4kg restock",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-297",
+      "date": "2026-05-20",
+      "vendor": "Meta Ads",
+      "category": "Marketing",
+      "amount": 1500,
+      "method": "Card",
+      "note": "Reels boost — mango campaign",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-296",
+      "date": "2026-05-19",
+      "vendor": "Tropolite Direct",
+      "category": "Ingredients",
+      "amount": 1680,
+      "method": "UPI",
+      "note": "Whipping cream 6L",
+      "receipt": true,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "628194821993",
+      "payeeVpa": "tropolite@oksbi"
+    },
+    {
+      "id": "e-295",
+      "date": "2026-05-18",
+      "vendor": "Porter",
+      "category": "Delivery",
+      "amount": 340,
+      "method": "UPI",
+      "note": "Aanya smash delivery",
+      "receipt": true,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "518190937865",
+      "payeeVpa": "porter.delivery@apl"
+    },
+    {
+      "id": "e-294",
+      "date": "2026-05-16",
+      "vendor": "TSSPDCL",
+      "category": "Utilities",
+      "amount": 4200,
+      "method": "AutoPay",
+      "note": "Electricity (kitchen heavy month)",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-293",
+      "date": "2026-05-15",
+      "vendor": "Metro Cash & Carry",
+      "category": "Ingredients",
+      "amount": 3850,
+      "method": "Card",
+      "note": "Flour 10kg + sugar 6kg restock",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-292",
+      "date": "2026-05-12",
+      "vendor": "Foodhall",
+      "category": "Ingredients",
+      "amount": 5240,
+      "method": "Card",
+      "note": "Hazelnut praline + vanilla pods",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-291",
+      "date": "2026-05-10",
+      "vendor": "Foodhall",
+      "category": "Ingredients",
+      "amount": 192,
+      "method": "Card",
+      "note": "Rose water",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-290",
+      "date": "2026-05-08",
+      "vendor": "Nature's Basket",
+      "category": "Ingredients",
+      "amount": 256,
+      "method": "UPI",
+      "note": "Brown sugar 1.6kg",
+      "receipt": false,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "797543231948",
+      "payeeVpa": "naturesbasket@hdfcbank"
+    },
+    {
+      "id": "e-289",
+      "date": "2026-05-05",
+      "vendor": "Workshop rent",
+      "category": "Rent",
+      "amount": 22000,
+      "method": "Bank",
+      "note": "Home studio shared",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-288",
+      "date": "2026-05-03",
+      "vendor": "Callebaut India",
+      "category": "Ingredients",
+      "amount": 4900,
+      "method": "Bank",
+      "note": "Belgian dark 3.5kg",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-287",
+      "date": "2026-05-01",
+      "vendor": "Pack-It Hyderabad",
+      "category": "Packaging",
+      "amount": 2730,
+      "method": "UPI",
+      "note": "Cake + bento boxes 60 pcs",
+      "receipt": true,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "757491186252",
+      "payeeVpa": "packithyd@oksbi"
+    },
+    {
+      "id": "e-286",
+      "date": "2026-04-30",
+      "vendor": "Foodhall",
+      "category": "Ingredients",
+      "amount": 1680,
+      "method": "Card",
+      "note": "Pistachio paste 0.4kg",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-285",
+      "date": "2026-04-28",
+      "vendor": "Instagram Reels",
+      "category": "Marketing",
+      "amount": 800,
+      "method": "Card",
+      "note": "Promote — best sellers reel",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-284",
+      "date": "2026-04-22",
+      "vendor": "Callebaut India",
+      "category": "Ingredients",
+      "amount": 765,
+      "method": "UPI",
+      "note": "Cocoa powder 0.9kg",
+      "receipt": true,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "760189555979",
+      "payeeVpa": "callebaut.in@ybl"
+    },
+    {
+      "id": "e-283",
+      "date": "2026-04-18",
+      "vendor": "Sugar Showroom",
+      "category": "Ingredients",
+      "amount": 1760,
+      "method": "UPI",
+      "note": "Gold leaf + decor",
+      "receipt": true,
+      "accountDebited": "UPI float",
+      "upiReferenceUtr": "711471049746",
+      "payeeVpa": "sugar.showroom@oksbi"
+    },
+    {
+      "id": "e-282",
+      "date": "2026-04-15",
+      "vendor": "Stripe / Razorpay",
+      "category": "Fees",
+      "amount": 1430,
+      "method": "Auto",
+      "note": "Payment processing fees April",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-281",
+      "date": "2026-04-12",
+      "vendor": "Jio Fiber",
+      "category": "Utilities",
+      "amount": 999,
+      "method": "AutoPay",
+      "note": "Internet April",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    },
+    {
+      "id": "e-280",
+      "date": "2026-04-10",
+      "vendor": "Canva",
+      "category": "Software",
+      "amount": 499,
+      "method": "Card",
+      "note": "Pro subscription",
+      "receipt": true,
+      "accountDebited": "Bank",
+      "upiReferenceUtr": null,
+      "payeeVpa": null
+    }
+  ],
+  "monthlySummary": [
+    {
+      "month": "2026-05",
+      "income": 56400,
+      "expense": 26900,
+      "profit": 29500
+    },
+    {
+      "month": "2026-04",
+      "income": 78200,
+      "expense": 34800,
+      "profit": 43400
+    },
+    {
+      "month": "2026-03",
+      "income": 92400,
+      "expense": 38100,
+      "profit": 54300
+    },
+    {
+      "month": "2026-02",
+      "income": 64500,
+      "expense": 28700,
+      "profit": 35800
+    },
+    {
+      "month": "2026-01",
+      "income": 71200,
+      "expense": 30200,
+      "profit": 41000
+    },
+    {
+      "month": "2025-12",
+      "income": 108500,
+      "expense": 42600,
+      "profit": 65900
+    }
+  ],
+  "compliance": [
+    {
+      "id": "cmp-fssai-2026",
+      "item": "FSSAI cottage licence renewal",
+      "type": "licence",
+      "dueDate": "2026-09-30",
+      "note": "Annual. Lapse = ₹5L penalty. Renew via foscos.fssai.gov.in."
+    },
+    {
+      "id": "cmp-gstr3b-may26",
+      "item": "GSTR-3B (May 2026)",
+      "type": "tax-return",
+      "dueDate": "2026-06-20",
+      "note": "Monthly GST summary return."
+    },
+    {
+      "id": "cmp-adv-tax-q1",
+      "item": "Advance tax · Q1 instalment",
+      "type": "advance-tax",
+      "dueDate": "2026-06-15",
+      "note": "15% of estimated annual tax. Pay via Challan 280."
+    },
+    {
+      "id": "cmp-insurance-2026",
+      "item": "Public liability insurance",
+      "type": "insurance",
+      "dueDate": "2026-08-12",
+      "note": "Annual renewal. Bajaj Allianz."
+    },
+    {
+      "id": "cmp-prof-tax-tg",
+      "item": "Professional tax (Telangana)",
+      "type": "tax-return",
+      "dueDate": "2026-06-30",
+      "note": "₹2,500/year. CTD Telangana portal."
+    }
+  ]
+}

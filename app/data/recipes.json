@@ -1,0 +1,207 @@
+[
+  {
+    "id": "r-pistachio-rose",
+    "name": "Pistachio Rose",
+    "category": "Signature",
+    "eggless": true,
+    "yieldNote": "Yields 1 × 8\" round or 24 cupcakes",
+    "prepMins": 35,
+    "bakeMins": 40,
+    "costPerCake": 380,
+    "ingredients": [
+      { "item": "Pistachio paste", "qty": "120g", "stockKey": "pistachio-paste" },
+      { "item": "Cake flour", "qty": "240g", "stockKey": "cake-flour" },
+      { "item": "Butter (unsalted)", "qty": "200g", "stockKey": "butter" },
+      { "item": "Caster sugar", "qty": "200g", "stockKey": "sugar-caster" },
+      { "item": "Rose water", "qty": "1 tsp", "stockKey": "rose-water" },
+      { "item": "Greek yogurt", "qty": "150g", "stockKey": "yogurt" },
+      { "item": "Baking powder", "qty": "2 tsp", "stockKey": "baking-powder" }
+    ],
+    "method": [
+      "Cream butter + sugar 5 min on med-high until pale",
+      "Fold pistachio paste + rose water",
+      "Sift dry, alternate with yogurt — 3 additions",
+      "Bake 165°C / 40 min. Toothpick clean. Cool fully.",
+      "Frost with rose-mascarpone — pipe shells around base."
+    ]
+  },
+  {
+    "id": "r-belgian-dark",
+    "name": "Belgian Dark",
+    "category": "Signature",
+    "eggless": false,
+    "yieldNote": "Yields 1 × 8\" round, dense crumb",
+    "prepMins": 25,
+    "bakeMins": 45,
+    "costPerCake": 295,
+    "ingredients": [
+      { "item": "Belgian dark 70% chocolate", "qty": "200g", "stockKey": "choc-dark-70" },
+      { "item": "Cocoa powder", "qty": "60g", "stockKey": "cocoa" },
+      { "item": "Cake flour", "qty": "180g", "stockKey": "cake-flour" },
+      { "item": "Eggs", "qty": "4 large", "stockKey": "eggs" },
+      { "item": "Butter", "qty": "180g", "stockKey": "butter" },
+      { "item": "Caster sugar", "qty": "220g", "stockKey": "sugar-caster" },
+      { "item": "Hot espresso", "qty": "100ml", "stockKey": "espresso" }
+    ],
+    "method": [
+      "Melt chocolate + butter over bain-marie",
+      "Whisk eggs + sugar to ribbon stage",
+      "Fold chocolate mixture into eggs",
+      "Sift dry — fold gently. Pour in hot espresso last.",
+      "Bake 160°C / 45 min. Slight wobble centre."
+    ]
+  },
+  {
+    "id": "r-tres-leches",
+    "name": "Tres Leches",
+    "category": "Eggless",
+    "eggless": true,
+    "yieldNote": "Yields 1 × 9\" square, soaked",
+    "prepMins": 30,
+    "bakeMins": 30,
+    "costPerCake": 340,
+    "ingredients": [
+      { "item": "Sponge base (eggless)", "qty": "1 batch", "stockKey": "sponge-mix" },
+      { "item": "Condensed milk", "qty": "1 tin", "stockKey": "condensed-milk" },
+      { "item": "Evaporated milk", "qty": "200ml", "stockKey": "evap-milk" },
+      { "item": "Full cream milk", "qty": "300ml", "stockKey": "milk" },
+      { "item": "Whipping cream", "qty": "400ml", "stockKey": "cream-whip" },
+      { "item": "Vanilla pod", "qty": "1", "stockKey": "vanilla-pod" }
+    ],
+    "method": [
+      "Bake eggless sponge — cool fully (overnight ideal)",
+      "Pierce all over with skewer — generous holes",
+      "Pour combined three milks slowly. Rest 4 hrs minimum.",
+      "Top with whipped cream + vanilla scraped pod",
+      "Refrigerate min 6 hrs before delivery."
+    ]
+  },
+  {
+    "id": "r-salted-caramel",
+    "name": "Salted Caramel",
+    "category": "Signature",
+    "eggless": false,
+    "yieldNote": "Yields 1 × 8\" round, 4-layer",
+    "prepMins": 40,
+    "bakeMins": 35,
+    "costPerCake": 320,
+    "ingredients": [
+      { "item": "Cake flour", "qty": "260g", "stockKey": "cake-flour" },
+      { "item": "Brown sugar", "qty": "180g", "stockKey": "sugar-brown" },
+      { "item": "Caster sugar", "qty": "60g", "stockKey": "sugar-caster" },
+      { "item": "Eggs", "qty": "3 large", "stockKey": "eggs" },
+      { "item": "Butter", "qty": "180g", "stockKey": "butter" },
+      { "item": "Caramel sauce (housemade)", "qty": "200g", "stockKey": "caramel-sauce" },
+      { "item": "Maldon salt", "qty": "to taste", "stockKey": "salt-maldon" }
+    ],
+    "method": [
+      "Make caramel — sugar to deep amber, off heat add cream + butter + salt",
+      "Cream butter + sugars until fluffy",
+      "Add eggs one at a time, then caramel (cooled)",
+      "Bake 170°C / 35 min. Cool, split into 4 layers.",
+      "Layer with caramel buttercream, drizzle, flaky salt finish"
+    ]
+  },
+  {
+    "id": "r-coffee-hazelnut",
+    "name": "Coffee Hazelnut",
+    "category": "Signature",
+    "eggless": false,
+    "yieldNote": "Yields 1 × 7\" round, 3-layer",
+    "prepMins": 30,
+    "bakeMins": 32,
+    "costPerCake": 305,
+    "ingredients": [
+      { "item": "Hazelnut praline", "qty": "100g", "stockKey": "praline-hazelnut" },
+      { "item": "Espresso powder", "qty": "2 tbsp", "stockKey": "espresso" },
+      { "item": "Cake flour", "qty": "200g", "stockKey": "cake-flour" },
+      { "item": "Butter", "qty": "150g", "stockKey": "butter" },
+      { "item": "Caster sugar", "qty": "150g", "stockKey": "sugar-caster" },
+      { "item": "Eggs", "qty": "3", "stockKey": "eggs" },
+      { "item": "Toasted hazelnuts", "qty": "50g", "stockKey": "hazelnut-toasted" }
+    ],
+    "method": [
+      "Cream butter + sugar, add espresso",
+      "Add eggs one at a time, fold in praline",
+      "Sift flour + baking powder, alternate with milk",
+      "Bake 170°C / 32 min",
+      "Stack with espresso buttercream, crown with crushed hazelnut praline"
+    ]
+  },
+  {
+    "id": "r-lemon-blueberry",
+    "name": "Lemon Blueberry",
+    "category": "Seasonal",
+    "eggless": true,
+    "yieldNote": "Yields 1 × 6\" round",
+    "prepMins": 25,
+    "bakeMins": 38,
+    "costPerCake": 260,
+    "ingredients": [
+      { "item": "Cake flour", "qty": "220g", "stockKey": "cake-flour" },
+      { "item": "Lemon zest", "qty": "3 lemons", "stockKey": "lemon" },
+      { "item": "Lemon juice", "qty": "60ml", "stockKey": "lemon" },
+      { "item": "Greek yogurt", "qty": "180g", "stockKey": "yogurt" },
+      { "item": "Caster sugar", "qty": "200g", "stockKey": "sugar-caster" },
+      { "item": "Fresh blueberries", "qty": "150g", "stockKey": "blueberries" },
+      { "item": "Olive oil (mild)", "qty": "120ml", "stockKey": "olive-oil" }
+    ],
+    "method": [
+      "Rub zest into sugar until fragrant",
+      "Whisk yogurt + oil + lemon juice into sugar mix",
+      "Fold dry in. Toss blueberries in flour, fold last.",
+      "Bake 165°C / 38 min",
+      "Cream cheese frosting + fresh blueberry crown"
+    ]
+  },
+  {
+    "id": "r-red-velvet",
+    "name": "Red Velvet",
+    "category": "Classic",
+    "eggless": false,
+    "yieldNote": "Yields 1 × 8\" round, 3-layer",
+    "prepMins": 25,
+    "bakeMins": 30,
+    "costPerCake": 245,
+    "ingredients": [
+      { "item": "Cake flour", "qty": "260g", "stockKey": "cake-flour" },
+      { "item": "Cocoa powder", "qty": "20g", "stockKey": "cocoa" },
+      { "item": "Buttermilk", "qty": "240ml", "stockKey": "buttermilk" },
+      { "item": "Red gel colour", "qty": "2 tsp", "stockKey": "food-color-red" },
+      { "item": "Eggs", "qty": "2", "stockKey": "eggs" },
+      { "item": "Butter", "qty": "120g", "stockKey": "butter" },
+      { "item": "Caster sugar", "qty": "200g", "stockKey": "sugar-caster" }
+    ],
+    "method": [
+      "Cream butter + sugar — add eggs",
+      "Mix buttermilk + red gel + vinegar separately",
+      "Sift dry. Alternate wet + dry into batter.",
+      "Bake 170°C / 30 min",
+      "Cream cheese frosting between layers"
+    ]
+  },
+  {
+    "id": "r-vanilla-bean",
+    "name": "Vanilla Bean",
+    "category": "Classic",
+    "eggless": true,
+    "yieldNote": "Yields 1 × 4\" round (smash/bento friendly)",
+    "prepMins": 20,
+    "bakeMins": 28,
+    "costPerCake": 180,
+    "ingredients": [
+      { "item": "Cake flour", "qty": "150g", "stockKey": "cake-flour" },
+      { "item": "Caster sugar", "qty": "130g", "stockKey": "sugar-caster" },
+      { "item": "Butter", "qty": "100g", "stockKey": "butter" },
+      { "item": "Vanilla pod", "qty": "1", "stockKey": "vanilla-pod" },
+      { "item": "Greek yogurt", "qty": "120g", "stockKey": "yogurt" },
+      { "item": "Baking powder", "qty": "1.5 tsp", "stockKey": "baking-powder" }
+    ],
+    "method": [
+      "Cream butter + sugar + scraped vanilla",
+      "Fold yogurt — alternate with sifted dry",
+      "Bake 165°C / 28 min",
+      "Buttercream of choice — works with all themes"
+    ]
+  }
+]

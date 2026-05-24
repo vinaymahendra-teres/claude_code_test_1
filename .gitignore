@@ -1,0 +1,49 @@
+# macOS
+.DS_Store
+
+# Editor / tooling
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local Claude Code / agent caches
+.claude/
+.axon/
+.playwright-mcp/
+
+# Python virtualenv
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+
+# Next.js
+.next/
+out/
+build/
+
+# Vercel
+.vercel/
+
+# Env files — never commit secrets, even publishable keys belong in vercel envs
+.env
+.env.*
+!.env.example
+
+# TypeScript build output
+*.tsbuildinfo
+next-env.d.ts
+
+# Test / debug artifacts
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Note: brainstorming/**/*.xlsx files are intentionally committed — they're the
+# generated artefacts users import into Google Sheets, and they're small (<100KB each).
