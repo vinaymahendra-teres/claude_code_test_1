@@ -78,3 +78,4 @@ Living as `window.X` in `app/src/ui.jsx` and `app/src/icons.jsx`. Each needs a T
 - **Server Actions vs API routes**: prefer Server Actions for inline mutations (e.g., DPDP consent toggle). API routes only for non-form mutations or cross-origin webhooks.
 - **Mutable state currently in localStorage** (tweaks, mode, timers): keep there for now. Migrate to Supabase only when a user has an account.
 - **`window.__data.calendar`**: now lives in `blocked_dates` + `bakery_settings`. The capacity tally is derivable via `count(*) from orders where delivery_date = X`.
+
