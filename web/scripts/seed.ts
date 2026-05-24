@@ -123,7 +123,7 @@ async function main() {
     capacityCeiling: number;
     blockedDates: { date: string; reason: string; type: string }[];
   }>("calendar");
-  await upsert("blocked_dates", calendar.blockedDates);
+  await upsert("blocked_dates", calendar.blockedDates, "date");
   await upsert(
     "bakery_settings",
     [{ key: "capacity_ceiling", value: { value: calendar.capacityCeiling } }],
