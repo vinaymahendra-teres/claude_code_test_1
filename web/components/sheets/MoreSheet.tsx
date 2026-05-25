@@ -38,6 +38,7 @@ const ADMIN_ROUTES: Array<{
   desc: string;
 }> = [
   { slug: "users", href: "/admin/users", label: "Users", icon: "Users", desc: "Roles, passwords, access" },
+  { slug: "addons", href: "/admin/addons", label: "Customisation catalogue", icon: "Sparkle", desc: "Addons priced per order" },
 ];
 
 export function MoreSheet({

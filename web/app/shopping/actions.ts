@@ -256,11 +256,11 @@ async function addOrderRequirementItems(listId: string, horizonDays: number) {
   endDate.setDate(endDate.getDate() + horizonDays);
   const endISO = endDate.toISOString().slice(0, 10);
 
-  const [{ data: orders }, { data: recipes }, { data: inventory }, { data: existing }] =
+  const [{ data: orders }, { data: recipes }, { data: inventory }, { data: existing }, { data: addonsCat }] =
     await Promise.all([
       supabase
         .from("orders")
-        .select("id, flavor, delivery_date, status")
+        .select("id, flavor, delivery_date, status, customisation")
         .gte("delivery_date", today)
         .lte("delivery_date", endISO)
         .not("status", "in", "(delivered,cancelled,draft)"),
@@ -272,6 +272,9 @@ async function addOrderRequirementItems(listId: string, horizonDays: number) {
         .from("shopping_list_items")
         .select("inventory_item_id")
         .eq("list_id", listId),
+      supabase
+        .from("customisation_addons")
+        .select("id, stock_item_id, default_qty"),
     ]);
 
   if (!orders || !recipes || !inventory) return;
@@ -279,17 +282,43 @@ async function addOrderRequirementItems(listId: string, horizonDays: number) {
   // Recipe ingredient stockKey references → count occurrences across orders
   type Ingredient = { item: string; qty?: string; stockKey?: string };
   type Recipe = { id: string; name: string; ingredients: Ingredient[] | null };
+  type OrderRow = {
+    id: string;
+    flavor: string | null;
+    delivery_date: string | null;
+    status: string;
+    customisation: { addons?: Array<{ id: string; qty?: number }> } | null;
+  };
   const recipesList = (recipes as Recipe[]) ?? [];
+  const ordersList = (orders as OrderRow[]) ?? [];
   const stockUsage = new Map<string, number>(); // inventory_item_id → number of orders needing it
 
-  for (const o of orders) {
-    if (!o.flavor) continue;
-    const key = o.flavor.toLowerCase();
-    const recipe = recipesList.find((r) => key.includes(r.name.toLowerCase()));
-    if (!recipe || !Array.isArray(recipe.ingredients)) continue;
-    for (const ing of recipe.ingredients) {
-      if (ing.stockKey) {
-        stockUsage.set(ing.stockKey, (stockUsage.get(ing.stockKey) || 0) + 1);
+  // Build a lookup from addon catalogue ID → linked stock_item_id (if any).
+  const addonStock = new Map<string, string | null>();
+  for (const a of (addonsCat as { id: string; stock_item_id: string | null }[] | null) ?? []) {
+    addonStock.set(a.id, a.stock_item_id);
+  }
+
+  for (const o of ordersList) {
+    // 1. From the order's recipe ingredients
+    if (o.flavor) {
+      const key = o.flavor.toLowerCase();
+      const recipe = recipesList.find((r) => key.includes(r.name.toLowerCase()));
+      if (recipe && Array.isArray(recipe.ingredients)) {
+        for (const ing of recipe.ingredients) {
+          if (ing.stockKey) {
+            stockUsage.set(ing.stockKey, (stockUsage.get(ing.stockKey) || 0) + 1);
+          }
+        }
+      }
+    }
+    // 2. From the order's customisation addons
+    const addons = o.customisation?.addons ?? [];
+    for (const a of addons) {
+      const linked = addonStock.get(a.id);
+      if (linked) {
+        const inc = Math.max(1, Math.ceil(a.qty ?? 1));
+        stockUsage.set(linked, (stockUsage.get(linked) || 0) + inc);
       }
     }
   }

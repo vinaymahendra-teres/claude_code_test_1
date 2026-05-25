@@ -10,6 +10,9 @@ import { advanceStage } from "./actions";
 import { EditOrderSheet } from "./EditOrderSheet";
 import { AttachmentGrid } from "@/components/AttachmentGrid";
 import { listAttachments } from "@/lib/attachments-actions";
+import { CustomisationSection } from "./CustomisationSection";
+import type { Customisation } from "@/lib/customisation";
+import type { AddonRow } from "@/app/admin/addons/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +45,7 @@ export default async function OrderDetailPage({
       id, customer_id, title, flavor, size, servings, eggless, theme, add_ons,
       price, deposit, balance, delivery_date, delivery_slot, delivery_area,
       status, notes, payment_mode, upi_reference_utr, payer_vpa, cold_chain_notes,
-      tiers, reference_count
+      tiers, reference_count, customisation
     `)
     .eq("id", id)
     .maybeSingle();
@@ -67,9 +70,18 @@ export default async function OrderDetailPage({
     recipe = (recipes ?? []).find((r) => key.includes(r.name.toLowerCase())) ?? null;
   }
 
-  const attachments = await listAttachments("order", order.id);
+  const [attachments, { data: addons }] = await Promise.all([
+    listAttachments("order", order.id),
+    supabase
+      .from("customisation_addons")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order"),
+  ]);
   const references = attachments.filter((a) => a.kind === "reference" || a.kind === "other");
   const delivered = attachments.filter((a) => a.kind === "delivered");
+  const customisation = (order.customisation as Customisation | null) ?? {};
+  const catalogue = (addons as AddonRow[] | null) ?? [];
 
   const currentIdx = STAGES.findIndex((s) => s.key === order.status);
 
@@ -231,6 +243,15 @@ export default async function OrderDetailPage({
               </Card>
             </>
           )}
+
+          {/* Customisation — theme/occasion/figurines + addons + cost rollup */}
+          <SectionHeader>Customisation</SectionHeader>
+          <CustomisationSection
+            orderId={order.id}
+            catalogue={catalogue}
+            initial={customisation}
+            recipeCost={recipe?.cost_per_cake ?? 0}
+          />
 
           {/* Recipe */}
           {recipe && (

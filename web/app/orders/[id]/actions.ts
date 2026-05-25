@@ -87,6 +87,23 @@ export async function cancelOrder(orderId: string) {
   revalidatePath("/");
 }
 
+export async function updateOrderCustomisation(
+  orderId: string,
+  customisation: unknown,
+) {
+  await requireAuth();
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const { error } = await supabase
+    .from("orders")
+    .update({ customisation, updated_at: new Date().toISOString() })
+    .eq("id", orderId);
+  if (error) throw new Error(`Failed to update customisation: ${error.message}`);
+  revalidatePath(`/orders/${orderId}`);
+  revalidatePath("/orders");
+  revalidatePath("/shopping");
+}
+
 export async function deleteOrder(orderId: string) {
   await requireRole("admin");
   const cookieStore = await cookies();
