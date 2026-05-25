@@ -6,6 +6,7 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, Avatar, Pill, StatTile, SectionHeader } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtCompactMoney } from "@/lib/format";
+import { listActiveBranches } from "@/lib/branches";
 
 export const revalidate = 60;
 
@@ -19,6 +20,7 @@ type CustomerRow = {
   last_order: string | null;
   avatar_tone: string | null;
   marketing_consent: string | null;
+  branch_id: string | null;
 };
 
 const SORT_KEYS: Record<string, (a: CustomerRow, b: CustomerRow) => number> = {
@@ -30,19 +32,36 @@ const SORT_KEYS: Record<string, (a: CustomerRow, b: CustomerRow) => number> = {
 export default async function CustomersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sort?: string }>;
+  searchParams: Promise<{ sort?: string; branch?: string }>;
 }) {
-  const { sort: rawSort } = await searchParams;
+  const { sort: rawSort, branch: rawBranch } = await searchParams;
   const sort = rawSort && SORT_KEYS[rawSort] ? rawSort : "recent";
 
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
-  const { data: customers } = await supabase
-    .from("customers")
-    .select("id, name, area, tags, order_count, lifetime_value, last_order, avatar_tone, marketing_consent");
+  const [{ data: customers }, branchRows] = await Promise.all([
+    supabase
+      .from("customers")
+      .select(
+        "id, name, area, tags, order_count, lifetime_value, last_order, avatar_tone, marketing_consent, branch_id",
+      ),
+    listActiveBranches(),
+  ]);
+  const branchOptions = branchRows.map((b) => ({
+    id: b.id,
+    label: b.label,
+    community: b.community ?? undefined,
+    neighbourhood: b.neighbourhood ?? undefined,
+  }));
+  const branchById = new Map(branchRows.map((b) => [b.id, b]));
+  const activeBranchId = rawBranch && branchById.has(rawBranch) ? rawBranch : null;
 
-  const list = [...((customers as CustomerRow[]) ?? [])].sort(SORT_KEYS[sort]);
+  const all = [...((customers as CustomerRow[]) ?? [])];
+  const filtered = activeBranchId
+    ? all.filter((c) => c.branch_id === activeBranchId)
+    : all;
+  const list = filtered.sort(SORT_KEYS[sort]);
   const total = list.length;
   const vipCount = list.filter((c) => c.tags?.includes("VIP")).length;
   const avgLtv = total > 0 ? list.reduce((s, c) => s + (c.lifetime_value ?? 0), 0) / total : 0;
@@ -73,12 +92,14 @@ export default async function CustomersPage({
                 {total} contacts · {vipCount} VIP · {consentedCount} consented
               </div>
             </div>
-            <AddCustomerButton />
+            <AddCustomerButton branches={branchOptions} defaultBranchId={activeBranchId ?? undefined} />
           </div>
         </header>
 
         <div style={{ padding: "10px 18px 8px", borderBottom: "1px solid var(--line-soft)", background: "var(--bg)" }}>
-          <SortTabs current={sort} />
+          <BranchChipLinks branches={branchOptions} active={activeBranchId} sort={sort} />
+          <div style={{ height: 6 }} />
+          <SortTabs current={sort} branch={activeBranchId} />
         </div>
 
         <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
@@ -185,12 +206,13 @@ export default async function CustomersPage({
   );
 }
 
-function SortTabs({ current }: { current: string }) {
+function SortTabs({ current, branch }: { current: string; branch: string | null }) {
   const tabs = [
     { value: "recent", label: "Recent" },
     { value: "ltv", label: "Top spenders" },
     { value: "alpha", label: "A–Z" },
   ];
+  const branchQuery = branch ? `&branch=${branch}` : "";
   return (
     <div
       style={{
@@ -207,7 +229,7 @@ function SortTabs({ current }: { current: string }) {
         return (
           <Link
             key={t.value}
-            href={`/customers?sort=${t.value}`}
+            href={`/customers?sort=${t.value}${branchQuery}`}
             style={{
               flex: 1,
               padding: "7px 10px",
@@ -222,6 +244,48 @@ function SortTabs({ current }: { current: string }) {
             }}
           >
             {t.label}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function BranchChipLinks({
+  branches,
+  active,
+  sort,
+}: {
+  branches: { id: string; label: string }[];
+  active: string | null;
+  sort: string;
+}) {
+  const opts: Array<{ id: string | null; label: string }> = [
+    { id: null, label: "All branches" },
+    ...branches,
+  ];
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+      {opts.map((o) => {
+        const sel = active === o.id;
+        const href =
+          o.id == null ? `/customers?sort=${sort}` : `/customers?sort=${sort}&branch=${o.id}`;
+        return (
+          <Link
+            key={o.id ?? "__all__"}
+            href={href}
+            style={{
+              padding: "5px 10px",
+              fontSize: 12,
+              fontWeight: 600,
+              borderRadius: 999,
+              border: "1.5px solid " + (sel ? "var(--caramel)" : "var(--line)"),
+              background: sel ? "var(--caramel)" : "var(--surface)",
+              color: sel ? "var(--surface)" : "var(--ink-soft)",
+              textDecoration: "none",
+            }}
+          >
+            {o.label}
           </Link>
         );
       })}

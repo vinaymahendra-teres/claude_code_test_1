@@ -31,7 +31,11 @@ export type CustomerEdit = {
   name: string;
   phone: string;
   instagram: string;
-  area: string;
+  // Address is the branch the customer belongs to + a freeform tower/flat
+  // detail (e.g. "T-3, 1602"). The old "area" column is kept in sync with
+  // the branch's community label so legacy reads don't break.
+  branchId: string;
+  addressDetail: string;
   tags: string[];
   notes: string;
 };
@@ -41,13 +45,27 @@ export async function updateCustomer(customerId: string, patch: CustomerEdit) {
   if (!patch.name.trim()) throw new Error("Name cannot be empty");
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
+
+  // Derive `area` from the branch's community + tower/flat detail so it
+  // reads naturally on legacy screens that still surface it.
+  const { data: branch } = await supabase
+    .from("branches")
+    .select("community")
+    .eq("id", patch.branchId)
+    .maybeSingle();
+  const areaParts = [patch.addressDetail.trim(), branch?.community]
+    .filter((s): s is string => !!s && !!s.trim());
+  const area = areaParts.join(" · ") || null;
+
   const { error } = await supabase
     .from("customers")
     .update({
       name: patch.name.trim(),
       phone: patch.phone.trim() || null,
       instagram: patch.instagram.trim() || null,
-      area: patch.area.trim() || null,
+      branch_id: patch.branchId || null,
+      address_detail: patch.addressDetail.trim() || null,
+      area,
       tags: patch.tags,
       notes: patch.notes.trim() || null,
       updated_at: new Date().toISOString(),
@@ -74,7 +92,8 @@ export type NewCustomerInput = {
   name: string;
   phone: string;
   instagram: string;
-  area: string;
+  branchId: string;
+  addressDetail: string;
   tags: string[];
 };
 
@@ -84,6 +103,7 @@ export async function createCustomer(input: NewCustomerInput): Promise<string> {
   if (!input.phone.trim() && !input.instagram.trim()) {
     throw new Error("Add a phone or Instagram handle");
   }
+  if (!input.branchId) throw new Error("Pick a branch");
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -94,12 +114,23 @@ export async function createCustomer(input: NewCustomerInput): Promise<string> {
     .slice(0, 24);
   const id = `c-${slug || "new"}-${Date.now().toString(36)}`;
 
+  const { data: branch } = await supabase
+    .from("branches")
+    .select("community")
+    .eq("id", input.branchId)
+    .maybeSingle();
+  const areaParts = [input.addressDetail.trim(), branch?.community]
+    .filter((s): s is string => !!s && !!s.trim());
+  const area = areaParts.join(" · ") || null;
+
   const { error } = await supabase.from("customers").insert({
     id,
     name: input.name.trim(),
     phone: input.phone.trim() || null,
     instagram: input.instagram.trim() || null,
-    area: input.area.trim() || null,
+    branch_id: input.branchId,
+    address_detail: input.addressDetail.trim() || null,
+    area,
     tags: input.tags,
     since: todayIst(),
     order_count: 0,

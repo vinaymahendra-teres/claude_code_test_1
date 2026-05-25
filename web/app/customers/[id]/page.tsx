@@ -9,6 +9,8 @@ import { fmtMoney, fmtCompactMoney, fmtDate } from "@/lib/format";
 import { toggleConsent, deleteCustomer } from "./actions";
 import { EditCustomerSheet } from "./EditCustomerSheet";
 import { ConfirmDelete } from "@/components/ConfirmDelete";
+import { listActiveBranches } from "@/lib/branches";
+import type { BranchOption } from "@/components/BranchPicker";
 
 export const dynamic = "force-dynamic";
 
@@ -68,12 +70,21 @@ export default async function CustomerDetailPage({
   if (!customer) notFound();
   const c = customer as Customer;
 
-  const { data: orders } = await supabase
-    .from("orders")
-    .select("id, title, flavor, price, delivery_date, delivery_slot, status")
-    .eq("customer_id", id)
-    .order("created_at", { ascending: false });
+  const [{ data: orders }, branchList] = await Promise.all([
+    supabase
+      .from("orders")
+      .select("id, title, flavor, price, delivery_date, delivery_slot, status")
+      .eq("customer_id", id)
+      .order("created_at", { ascending: false }),
+    listActiveBranches(),
+  ]);
   const ordersList = (orders as Order[]) ?? [];
+  const branchOptions: BranchOption[] = branchList.map((b) => ({
+    id: b.id,
+    label: b.label,
+    community: b.community ?? undefined,
+    neighbourhood: b.neighbourhood ?? undefined,
+  }));
 
   return (
     <PhoneShell>
@@ -141,10 +152,13 @@ export default async function CustomerDetailPage({
                 name: c.name,
                 phone: c.phone ?? "",
                 instagram: c.instagram ?? "",
-                area: c.area ?? "",
+                branchId: (c as { branch_id?: string }).branch_id ?? "",
+                addressDetail:
+                  (c as { address_detail?: string }).address_detail ?? c.area ?? "",
                 tags: c.tags ?? [],
                 notes: c.notes ?? "",
               }}
+              branches={branchOptions}
             />
             <ConfirmDelete
               label={c.name}

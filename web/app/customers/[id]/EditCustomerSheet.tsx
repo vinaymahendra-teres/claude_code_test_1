@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Field } from "@/components/ui";
 import { Sheet, TextInput, Button } from "@/components/ui-client";
 import { Icon } from "@/components/Icon";
+import { BranchPicker, type BranchOption } from "@/components/BranchPicker";
 import { updateCustomer, type CustomerEdit } from "./actions";
 
 const TAG_OPTIONS = ["VIP", "Eggless", "Allergy-egg", "Allergy-nut", "Festival regular", "DND"];
@@ -11,15 +12,18 @@ const TAG_OPTIONS = ["VIP", "Eggless", "Allergy-egg", "Allergy-nut", "Festival r
 export function EditCustomerSheet({
   customerId,
   initial,
+  branches,
 }: {
   customerId: string;
   initial: CustomerEdit;
+  branches: BranchOption[];
 }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(initial.name);
   const [phone, setPhone] = useState(initial.phone);
   const [instagram, setInstagram] = useState(initial.instagram);
-  const [area, setArea] = useState(initial.area);
+  const [branchId, setBranchId] = useState(initial.branchId);
+  const [addressDetail, setAddressDetail] = useState(initial.addressDetail);
   const [tags, setTags] = useState<string[]>(initial.tags);
   const [notes, setNotes] = useState(initial.notes);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +33,8 @@ export function EditCustomerSheet({
     setName(initial.name);
     setPhone(initial.phone);
     setInstagram(initial.instagram);
-    setArea(initial.area);
+    setBranchId(initial.branchId);
+    setAddressDetail(initial.addressDetail);
     setTags(initial.tags);
     setNotes(initial.notes);
     setError(null);
@@ -46,9 +51,21 @@ export function EditCustomerSheet({
       setError("Name cannot be empty");
       return;
     }
+    if (!branchId) {
+      setError("Pick a branch");
+      return;
+    }
     startTransition(async () => {
       try {
-        await updateCustomer(customerId, { name, phone, instagram, area, tags, notes });
+        await updateCustomer(customerId, {
+          name,
+          phone,
+          instagram,
+          branchId,
+          addressDetail,
+          tags,
+          notes,
+        });
         setOpen(false);
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
@@ -56,7 +73,15 @@ export function EditCustomerSheet({
     });
   }
 
-  const diff = computeDiff(initial, { name, phone, instagram, area, tags, notes });
+  const diff = computeDiff(initial, {
+    name,
+    phone,
+    instagram,
+    branchId,
+    addressDetail,
+    tags,
+    notes,
+  });
 
   return (
     <>
@@ -84,11 +109,14 @@ export function EditCustomerSheet({
               prefix="@"
             />
           </Field>
-          <Field label="Area">
+          <Field label="Branch" hint="Which gated community do they live in">
+            <BranchPicker branches={branches} value={branchId} onChange={(v) => setBranchId(v ?? "")} />
+          </Field>
+          <Field label="Tower / flat" optional hint='e.g. "T-3, 1602"'>
             <TextInput
-              value={area}
-              onChange={(e) => setArea(e.target.value)}
-              placeholder="Madhapur"
+              value={addressDetail}
+              onChange={(e) => setAddressDetail(e.target.value)}
+              placeholder="Tower + flat number"
             />
           </Field>
           <Field label="Tags">
@@ -191,7 +219,8 @@ function computeDiff(a: CustomerEdit, b: CustomerEdit): Array<[string, string, s
     ["name", "Name"],
     ["phone", "Phone"],
     ["instagram", "Instagram"],
-    ["area", "Area"],
+    ["branchId", "Branch"],
+    ["addressDetail", "Tower/flat"],
     ["notes", "Notes"],
   ];
   for (const [key, label] of fields) {

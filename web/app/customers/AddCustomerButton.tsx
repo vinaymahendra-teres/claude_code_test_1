@@ -5,17 +5,25 @@ import { useState, useTransition } from "react";
 import { Field } from "@/components/ui";
 import { Sheet, TextInput, Button } from "@/components/ui-client";
 import { Icon } from "@/components/Icon";
+import { BranchPicker, type BranchOption } from "@/components/BranchPicker";
 import { createCustomer } from "./[id]/actions";
 
 const TAG_OPTIONS = ["VIP", "Eggless", "Allergy-egg", "Allergy-nut", "Festival regular"];
 
-export function AddCustomerButton() {
+export function AddCustomerButton({
+  branches,
+  defaultBranchId,
+}: {
+  branches: BranchOption[];
+  defaultBranchId?: string;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [instagram, setInstagram] = useState("");
-  const [area, setArea] = useState("");
+  const [branchId, setBranchId] = useState(defaultBranchId ?? branches[0]?.id ?? "");
+  const [addressDetail, setAddressDetail] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -24,7 +32,8 @@ export function AddCustomerButton() {
     setName("");
     setPhone("");
     setInstagram("");
-    setArea("");
+    setBranchId(defaultBranchId ?? branches[0]?.id ?? "");
+    setAddressDetail("");
     setTags([]);
     setError(null);
   }
@@ -35,9 +44,20 @@ export function AddCustomerButton() {
 
   function submit() {
     setError(null);
+    if (!branchId) {
+      setError("Pick a branch");
+      return;
+    }
     startTransition(async () => {
       try {
-        const id = await createCustomer({ name, phone, instagram, area, tags });
+        const id = await createCustomer({
+          name,
+          phone,
+          instagram,
+          branchId,
+          addressDetail,
+          tags,
+        });
         close();
         router.push(`/customers/${id}`);
       } catch (e) {
@@ -90,11 +110,14 @@ export function AddCustomerButton() {
               prefix="@"
             />
           </Field>
-          <Field label="Area" optional>
+          <Field label="Branch" hint="Which gated community do they live in">
+            <BranchPicker branches={branches} value={branchId} onChange={(v) => setBranchId(v ?? "")} />
+          </Field>
+          <Field label="Tower / flat" optional hint='e.g. "T-3, 1602"'>
             <TextInput
-              value={area}
-              onChange={(e) => setArea(e.target.value)}
-              placeholder="Madhapur, near IKEA"
+              value={addressDetail}
+              onChange={(e) => setAddressDetail(e.target.value)}
+              placeholder="Tower + flat"
             />
           </Field>
           <Field label="Tags" optional>
