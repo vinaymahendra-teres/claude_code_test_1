@@ -7,41 +7,31 @@ import { Icon } from "@/components/Icon";
 import { fmtMoney } from "@/lib/format";
 import {
   ADDON_CATEGORIES,
-  OCCASIONS,
-  SHAPES,
   addonsTotal,
+  briefSchemaFor,
   hasCustomisation,
   type Customisation,
   type CustomisationAddon,
   type CustomisationBrief,
-  type AddonCategory,
 } from "@/lib/customisation";
 import { updateOrderCustomisation } from "./actions";
 import type { AddonRow } from "@/app/admin/addons/actions";
-
-const COLOR_SWATCHES = [
-  "#f8c7c9",
-  "#fde2c0",
-  "#fffbe6",
-  "#cfe8d0",
-  "#bedfff",
-  "#d6c5ea",
-  "#1a1a1a",
-  "#ffffff",
-  "#d4af37",
-];
+import { BriefForm } from "@/components/BriefForm";
 
 export function CustomisationSection({
   orderId,
+  productLine,
   catalogue,
   initial,
   recipeCost,
 }: {
   orderId: string;
+  productLine: string;
   catalogue: AddonRow[];
   initial: Customisation;
   recipeCost: number;
 }) {
+  const briefSchema = briefSchemaFor(productLine);
   const [open, setOpen] = useState(false);
   const [brief, setBrief] = useState<CustomisationBrief>(initial.brief ?? {});
   const [addons, setAddons] = useState<CustomisationAddon[]>(initial.addons ?? []);
@@ -55,10 +45,6 @@ export function CustomisationSection({
 
   const addonsCost = addonsTotal(addons);
   const totalCustomisationCost = addonsCost;
-
-  function patchBrief<K extends keyof CustomisationBrief>(key: K, value: CustomisationBrief[K]) {
-    setBrief((b) => ({ ...b, [key]: value }));
-  }
 
   function toggleAddon(row: AddonRow) {
     setAddons((arr) => {
@@ -196,146 +182,9 @@ export function CustomisationSection({
 
       <Sheet open={open} onClose={() => setOpen(false)} title="Customisation" snap="full">
         <div style={{ paddingBottom: 24 }}>
-          {/* Brief */}
+          {/* Brief (fields adapt to product line) */}
           <div style={sectionLabel}>Brief</div>
-
-          <Field label="Occasion">
-            <div style={chipRow}>
-              {OCCASIONS.map((o) => {
-                const sel = brief.occasion === o;
-                return (
-                  <Chip
-                    key={o}
-                    selected={sel}
-                    onClick={() => patchBrief("occasion", sel ? undefined : o)}
-                  >
-                    {o}
-                  </Chip>
-                );
-              })}
-            </div>
-          </Field>
-
-          <Field label="Theme">
-            <TextInput
-              multiline
-              value={brief.theme ?? ""}
-              onChange={(e) => patchBrief("theme", e.target.value || undefined)}
-              placeholder="Pastel floral, ivory + dusty pink. Hand-piped peonies."
-            />
-          </Field>
-
-          <Field label="Colours">
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {COLOR_SWATCHES.map((c) => {
-                const sel = (brief.colors ?? []).includes(c);
-                return (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => {
-                      const list = brief.colors ?? [];
-                      patchBrief(
-                        "colors",
-                        sel ? list.filter((x) => x !== c) : [...list, c],
-                      );
-                    }}
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 999,
-                      background: c,
-                      border: "2px solid " + (sel ? "var(--caramel-deep)" : "var(--line)"),
-                      cursor: "pointer",
-                    }}
-                    aria-label={c}
-                  />
-                );
-              })}
-            </div>
-            {(brief.colors ?? []).length > 0 && (
-              <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 6 }}>
-                {brief.colors!.join(" · ")}
-              </div>
-            )}
-          </Field>
-
-          <Field label="Shape">
-            <div style={chipRow}>
-              {SHAPES.map((s) => {
-                const sel = brief.shape === s;
-                return (
-                  <Chip key={s} selected={sel} onClick={() => patchBrief("shape", sel ? undefined : s)}>
-                    {s}
-                  </Chip>
-                );
-              })}
-            </div>
-          </Field>
-
-          <Field label="Piped message" optional>
-            <TextInput
-              value={brief.message?.text ?? ""}
-              onChange={(e) =>
-                patchBrief(
-                  "message",
-                  e.target.value
-                    ? { text: e.target.value, color: brief.message?.color }
-                    : undefined,
-                )
-              }
-              placeholder="Sixty &amp; Glowing"
-            />
-            <TextInput
-              value={brief.message?.color ?? ""}
-              onChange={(e) =>
-                patchBrief("message", { text: brief.message?.text ?? "", color: e.target.value })
-              }
-              placeholder="Message colour (gold, deep red…)"
-              style={{ marginTop: 6 }}
-            />
-          </Field>
-
-          <Field label="Figurines / toppers" optional>
-            <TextInput
-              multiline
-              value={brief.figurines ?? ""}
-              onChange={(e) => patchBrief("figurines", e.target.value || undefined)}
-              placeholder="Fondant bride + groom, two acrylic monograms"
-            />
-          </Field>
-
-          <Field label="Dietary" optional>
-            <div style={chipRow}>
-              {["eggless", "gluten-free", "sugar-free", "nut-free", "vegan"].map((d) => {
-                const sel = (brief.dietary ?? []).includes(d);
-                return (
-                  <Chip
-                    key={d}
-                    selected={sel}
-                    onClick={() => {
-                      const list = brief.dietary ?? [];
-                      patchBrief(
-                        "dietary",
-                        sel ? list.filter((x) => x !== d) : [...list, d],
-                      );
-                    }}
-                  >
-                    {d}
-                  </Chip>
-                );
-              })}
-            </div>
-          </Field>
-
-          <Field label="Notes" optional>
-            <TextInput
-              multiline
-              value={brief.notes ?? ""}
-              onChange={(e) => patchBrief("notes", e.target.value || undefined)}
-              placeholder="Anything that hasn't fit above"
-            />
-          </Field>
+          <BriefForm schema={briefSchema} brief={brief} onChange={setBrief} />
 
           {/* Addons picker */}
           <div style={{ ...sectionLabel, marginTop: 8 }}>Addons</div>
@@ -500,81 +349,10 @@ function BriefSummary({ brief }: { brief: CustomisationBrief }) {
   );
 }
 
-function Chip({
-  children,
-  selected,
-  onClick,
-}: {
-  children: React.ReactNode;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <span
-      onClick={onClick}
-      style={{
-        padding: "6px 12px",
-        fontSize: 12.5,
-        fontWeight: 600,
-        borderRadius: 999,
-        border: "1.5px solid " + (selected ? "var(--caramel)" : "var(--line)"),
-        background: selected ? "var(--caramel-soft)" : "var(--surface)",
-        color: selected ? "var(--caramel-deep)" : "var(--ink-soft)",
-        cursor: "pointer",
-        textTransform: "capitalize",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
-// Field is server-safe but we render it within a client component.
-function Field({
-  label,
-  children,
-  optional,
-  hint,
-}: {
-  label: string;
-  children: React.ReactNode;
-  optional?: boolean;
-  hint?: string;
-}) {
-  return (
-    <label style={{ display: "block", marginBottom: 14 }}>
-      <div
-        style={{
-          fontSize: 12.5,
-          fontWeight: 600,
-          color: "var(--ink-soft)",
-          marginBottom: 6,
-          display: "flex",
-          gap: 8,
-          alignItems: "baseline",
-        }}
-      >
-        <span>{label}</span>
-        {optional && (
-          <span style={{ fontSize: 11, fontWeight: 500, color: "var(--muted)" }}>optional</span>
-        )}
-      </div>
-      {children}
-      {hint && <div style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 5 }}>{hint}</div>}
-    </label>
-  );
-}
-
 const sectionLabel: React.CSSProperties = {
   fontFamily: "DM Serif Display, serif",
   fontSize: 17,
   margin: "12px 0 10px",
-};
-
-const chipRow: React.CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 6,
 };
 
 const qtyInput: React.CSSProperties = {

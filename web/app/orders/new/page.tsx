@@ -10,20 +10,37 @@ export default async function NewOrderPage() {
   const supabase = createClient(cookieStore);
   const TODAY = todayIst();
 
-  const [{ data: customers }, { data: recipes }, { data: blocked }, { data: orders }, { data: settings }] =
-    await Promise.all([
-      supabase
-        .from("customers")
-        .select("id, name, phone, instagram, area, tags, order_count, avatar_tone")
-        .order("name"),
-      supabase
-        .from("recipes")
-        .select("id, name, eggless, cost_per_cake")
-        .order("name"),
-      supabase.from("blocked_dates").select("date, reason, type"),
-      supabase.from("orders").select("delivery_date, status").gte("delivery_date", TODAY),
-      supabase.from("bakery_settings").select("value").eq("key", "calendar").maybeSingle(),
-    ]);
+  const [
+    { data: customers },
+    { data: recipes },
+    { data: blocked },
+    { data: orders },
+    { data: settings },
+    { data: productLines },
+    { data: addons },
+  ] = await Promise.all([
+    supabase
+      .from("customers")
+      .select("id, name, phone, instagram, area, tags, order_count, avatar_tone")
+      .order("name"),
+    supabase
+      .from("recipes")
+      .select("id, name, eggless, cost_per_cake")
+      .order("name"),
+    supabase.from("blocked_dates").select("date, reason, type"),
+    supabase.from("orders").select("delivery_date, status").gte("delivery_date", TODAY),
+    supabase.from("bakery_settings").select("value").eq("key", "calendar").maybeSingle(),
+    supabase
+      .from("product_lines")
+      .select("id, name, label, sizes, default_unit, sort_order, is_active")
+      .eq("is_active", true)
+      .order("sort_order"),
+    supabase
+      .from("customisation_addons")
+      .select("id, name, category, default_cost, default_qty, unit, is_active, sort_order, notes, stock_item_id")
+      .eq("is_active", true)
+      .order("sort_order"),
+  ]);
 
   const calendarValue = (settings?.value as { capacityCeiling?: number } | undefined) ?? {};
   const capacityCeiling =
@@ -66,9 +83,47 @@ export default async function NewOrderPage() {
       loadByDate={loadByDate}
       blockedByDate={blockedByDate}
       today={TODAY}
+      productLines={
+        (productLines ?? []).map((p) => ({
+          id: p.id,
+          name: p.name,
+          label: p.label,
+          default_unit: p.default_unit ?? "",
+          sizes: Array.isArray(p.sizes) ? (p.sizes as ProductLineSize[]) : [],
+        })) as ProductLine[]
+      }
+      addons={
+        (addons ?? []).map((a) => ({
+          id: a.id,
+          name: a.name,
+          category: a.category,
+          default_cost: a.default_cost ?? 0,
+          default_qty: Number(a.default_qty ?? 1),
+          unit: a.unit ?? "",
+          stock_item_id: a.stock_item_id ?? null,
+          notes: a.notes ?? null,
+          is_active: !!a.is_active,
+          sort_order: a.sort_order ?? 999,
+        }))
+      }
     />
   );
 }
+
+export type ProductLineSize = {
+  name: string;
+  servings: number;
+  price_hint?: number;
+  notes?: string;
+};
+
+export type ProductLine = {
+  id: string;
+  name: string;
+  label: string;
+  default_unit: string;
+  sizes: ProductLineSize[];
+};
 
 export type Customer = {
   id: string;

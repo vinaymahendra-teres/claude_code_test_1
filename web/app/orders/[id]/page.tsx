@@ -248,6 +248,7 @@ export default async function OrderDetailPage({
           <SectionHeader>Customisation</SectionHeader>
           <CustomisationSection
             orderId={order.id}
+            productLine={(order as { product_line?: string }).product_line ?? "cake"}
             catalogue={catalogue}
             initial={customisation}
             recipeCost={recipe?.cost_per_cake ?? 0}

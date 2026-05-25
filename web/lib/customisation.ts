@@ -2,14 +2,33 @@
 // client components, so no "use server" here.
 
 export type CustomisationBrief = {
+  // Common across all lines
   occasion?: string;
   theme?: string;
-  colors?: string[];
-  shape?: string;
+  colors?: string[]; // palette swatches
+  motif?: string; // typed motif description ("art-deco florals", "PSG kit")
   message?: { text: string; color?: string };
-  figurines?: string;
   dietary?: string[];
   notes?: string;
+
+  // Cake-specific
+  shape?: string;
+  topper?: string; // "Acrylic gold monogram", "Number candle"
+  figurines?: string;
+
+  // Cupcake-specific
+  flavor_mix?: string; // e.g. "6 vanilla + 6 chocolate"
+  liner_colour?: string;
+
+  // Brownie / boxed-product
+  wrapping?: string;
+
+  // Tub
+  layer_notes?: string;
+
+  // Bomboloni
+  filling_mix?: string;
+  glaze?: string;
 };
 
 export type CustomisationAddon = {
@@ -67,6 +86,61 @@ export const SHAPES = [
   "character",
   "custom",
 ] as const;
+
+// Per-product-line schema: which structured brief fields are surfaced when
+// the operator picks that line on a New Order. Keeps cake-only fields like
+// "topper" / "figurines" out of a bomboloni brief, and vice versa.
+export type BriefField =
+  | "occasion"
+  | "theme"
+  | "palette"
+  | "motif"
+  | "shape"
+  | "message"
+  | "topper"
+  | "figurines"
+  | "flavor_mix"
+  | "liner_colour"
+  | "wrapping"
+  | "layer_notes"
+  | "filling_mix"
+  | "glaze"
+  | "dietary"
+  | "notes";
+
+export const BRIEF_SCHEMAS: Record<string, BriefField[]> = {
+  cake: [
+    "occasion",
+    "theme",
+    "palette",
+    "motif",
+    "shape",
+    "message",
+    "topper",
+    "figurines",
+    "dietary",
+    "notes",
+  ],
+  cupcake: [
+    "occasion",
+    "theme",
+    "palette",
+    "flavor_mix",
+    "liner_colour",
+    "topper",
+    "message",
+    "dietary",
+    "notes",
+  ],
+  brownie: ["occasion", "message", "wrapping", "dietary", "notes"],
+  tub: ["flavor_mix", "layer_notes", "dietary", "notes"],
+  bomboloni: ["filling_mix", "glaze", "dietary", "notes"],
+};
+
+export function briefSchemaFor(productLine: string | null | undefined): BriefField[] {
+  if (!productLine) return BRIEF_SCHEMAS.cake;
+  return BRIEF_SCHEMAS[productLine] ?? BRIEF_SCHEMAS.cake;
+}
 
 export function addonsTotal(addons: CustomisationAddon[] | null | undefined): number {
   if (!addons) return 0;

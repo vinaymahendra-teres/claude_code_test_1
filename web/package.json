@@ -10,7 +10,8 @@
     "seed": "tsx scripts/seed.ts",
     "seed:admins": "tsx scripts/seed-admins.ts",
     "seed:calendar": "tsx scripts/seed-calendar.ts",
-    "seed:addons": "tsx scripts/seed-addons.ts"
+    "seed:addons": "tsx scripts/seed-addons.ts",
+    "seed:product-lines": "tsx scripts/seed-product-lines.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",

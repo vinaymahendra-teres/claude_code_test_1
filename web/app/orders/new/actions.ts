@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { todayIst } from "@/lib/format";
 
+import type { Customisation } from "@/lib/customisation";
+
 export type CreateOrderInput = {
   customerId: string | null;
   newCustomer: {
@@ -13,13 +15,17 @@ export type CreateOrderInput = {
     phone: string;
     instagram: string;
   } | null;
+  productLine: string;
   title: string;
   flavor: string;
   size: string;
   servings: number;
   eggless: boolean;
+  // Legacy: a single sentence about the brief; new code passes "" and uses
+  // customisation.brief.theme instead.
   theme: string;
   addOns: string[];
+  customisation: Customisation;
   deliveryDate: string;
   deliverySlot: string;
   deliveryArea: string;
@@ -70,6 +76,7 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
   const { error } = await supabase.from("orders").insert({
     id: orderId,
     customer_id: customerId,
+    product_line: input.productLine || "cake",
     title: input.title,
     flavor: input.flavor,
     size: input.size,
@@ -77,6 +84,7 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
     eggless: input.eggless,
     theme: input.theme,
     add_ons: input.addOns,
+    customisation: input.customisation ?? {},
     price: input.price,
     deposit: input.deposit,
     balance,

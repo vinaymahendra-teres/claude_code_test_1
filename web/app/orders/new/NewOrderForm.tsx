@@ -8,7 +8,16 @@ import { Button, TextInput, Toggle, ListRow } from "@/components/ui-client";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate } from "@/lib/format";
 import { createOrder } from "./actions";
-import type { Customer, Recipe } from "./page";
+import type { Customer, Recipe, ProductLine } from "./page";
+import { BriefForm } from "@/components/BriefForm";
+import {
+  ADDON_CATEGORIES,
+  addonsTotal,
+  briefSchemaFor,
+  type CustomisationAddon,
+  type CustomisationBrief,
+} from "@/lib/customisation";
+import type { AddonRow } from "@/app/admin/addons/actions";
 
 type Props = {
   customers: Customer[];
@@ -17,6 +26,8 @@ type Props = {
   loadByDate: Record<string, number>;
   blockedByDate: Record<string, { reason: string; type: string | null }>;
   today: string;
+  productLines: ProductLine[];
+  addons: AddonRow[];
 };
 
 type FormState = {
@@ -24,13 +35,14 @@ type FormState = {
   newCustomerName: string;
   newCustomerPhone: string;
   newCustomerInsta: string;
+  productLine: string;
   title: string;
   flavor: string;
   size: string;
   servings: number;
   eggless: boolean;
-  theme: string;
-  addOns: string[];
+  brief: CustomisationBrief;
+  selectedAddons: CustomisationAddon[];
   deliveryDate: string;
   deliverySlot: string;
   deliveryArea: string;
@@ -40,27 +52,9 @@ type FormState = {
   notes: string;
 };
 
-const STEPS = ["Customer", "Cake", "Theme", "Delivery", "Pricing", "Review"] as const;
-
-const SIZES = [
-  { v: "Bento", servings: 2, price: "₹1.2k" },
-  { v: '4 inch', servings: 6, price: "₹1.8k" },
-  { v: '6 inch', servings: 12, price: "₹3.5k" },
-  { v: '7 inch', servings: 16, price: "₹4.5k" },
-  { v: '8 inch', servings: 22, price: "₹5.5k" },
-  { v: "Two-tier", servings: 38, price: "₹12k+" },
-];
+const STEPS = ["Customer", "Product", "Look", "Delivery", "Pricing", "Review"] as const;
 
 const SLOTS = ["9 AM", "11 AM", "1 PM", "3 PM", "5 PM", "7 PM", "8 PM", "Anytime"];
-
-const ADD_ONS = [
-  "Matching cupcakes (12)",
-  "Cake topper",
-  "Number candle",
-  "Custom message card",
-  "Edible photo print",
-  "Gold leaf finish",
-];
 
 export function NewOrderForm({
   customers,
@@ -69,23 +63,27 @@ export function NewOrderForm({
   loadByDate,
   blockedByDate,
   today,
+  productLines,
+  addons,
 }: Props) {
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const defaultLineName = productLines[0]?.name ?? "cake";
   const [form, setForm] = useState<FormState>({
     customerId: null,
     newCustomerName: "",
     newCustomerPhone: "",
     newCustomerInsta: "",
+    productLine: defaultLineName,
     title: "",
     flavor: "",
     size: "",
     servings: 0,
     eggless: false,
-    theme: "",
-    addOns: [],
+    brief: {},
+    selectedAddons: [],
     deliveryDate: "",
     deliverySlot: "",
     deliveryArea: "",
@@ -111,9 +109,7 @@ export function NewOrderForm({
       if (!form.flavor) e.flavor = "Pick a flavor";
       if (!form.size) e.size = "Pick a size";
     }
-    if (s === 2) {
-      if (!form.theme) e.theme = "Describe the theme — even a sentence helps";
-    }
+    // s === 2 ("Look") — brief is optional; skip validation
     if (s === 3) {
       if (!form.deliveryDate) e.deliveryDate = "Pick a date";
       if (!form.deliverySlot) e.deliverySlot = "Pick a time slot";
@@ -162,13 +158,17 @@ export function NewOrderForm({
                 phone: form.newCustomerPhone,
                 instagram: form.newCustomerInsta,
               },
+          productLine: form.productLine,
           title: form.title,
           flavor: form.flavor,
           size: form.size,
           servings: form.servings,
           eggless: form.eggless,
-          theme: form.theme,
-          addOns: form.addOns,
+          // Legacy fields preserved for backward compat; brief is the new
+          // structured source of truth.
+          theme: form.brief.theme ?? "",
+          addOns: [],
+          customisation: { brief: form.brief, addons: form.selectedAddons },
           deliveryDate: form.deliveryDate,
           deliverySlot: form.deliverySlot,
           deliveryArea: form.deliveryArea,
@@ -240,8 +240,22 @@ export function NewOrderForm({
           {step === 0 && (
             <StepCustomer customers={customers} form={form} set={set} errors={errors} />
           )}
-          {step === 1 && <StepCake recipes={recipes} form={form} set={set} errors={errors} />}
-          {step === 2 && <StepTheme form={form} set={set} errors={errors} />}
+          {step === 1 && (
+            <StepCake
+              productLines={productLines}
+              recipes={recipes}
+              form={form}
+              set={set}
+              errors={errors}
+            />
+          )}
+          {step === 2 && (
+            <StepTheme
+              form={form}
+              set={set}
+              catalogue={addons}
+            />
+          )}
           {step === 3 && (
             <StepDelivery
               form={form}
@@ -497,20 +511,57 @@ function StepCustomer({
 // ---------- Step 2: Cake ----------
 
 function StepCake({
+  productLines,
   recipes,
   form,
   set,
   errors,
 }: {
+  productLines: ProductLine[];
   recipes: Recipe[];
   form: FormState;
   set: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
   errors: Record<string, string>;
 }) {
+  const activeLine =
+    productLines.find((p) => p.name === form.productLine) ?? productLines[0];
+  const sizes = activeLine?.sizes ?? [];
+
   return (
     <div>
-      <h2 style={stepHeading}>What are we baking?</h2>
-      <p style={stepLede}>Pick a flavor from your menu and size it up.</p>
+      <h2 style={stepHeading}>What are we making?</h2>
+      <p style={stepLede}>Pick the product line, then flavour and size.</p>
+
+      <Field label="Product line">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {productLines.map((p) => {
+            const sel = form.productLine === p.name;
+            return (
+              <span
+                key={p.id}
+                onClick={() => {
+                  set("productLine", p.name);
+                  // Reset size + servings — old selection probably doesn't apply.
+                  set("size", "");
+                  set("servings", 0);
+                }}
+                style={{
+                  padding: "7px 12px",
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  borderRadius: 999,
+                  border: "1.5px solid " + (sel ? "var(--caramel)" : "var(--line)"),
+                  background: sel ? "var(--caramel-soft)" : "var(--surface)",
+                  color: sel ? "var(--caramel-deep)" : "var(--ink-soft)",
+                  cursor: "pointer",
+                }}
+              >
+                {p.label}
+              </span>
+            );
+          })}
+        </div>
+      </Field>
 
       <Field
         label="Order name"
@@ -525,7 +576,7 @@ function StepCake({
         />
       </Field>
 
-      <Field label="Flavor" error={errors.flavor}>
+      <Field label="Flavour" error={errors.flavor}>
         <div
           style={{
             display: "flex",
@@ -574,16 +625,23 @@ function StepCake({
         </div>
       </Field>
 
-      <Field label="Size" error={errors.size}>
+      <Field
+        label={activeLine ? `Size · ${activeLine.label}` : "Size"}
+        error={errors.size}
+      >
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-          {SIZES.map((s) => {
-            const sel = form.size === s.v;
+          {sizes.map((s) => {
+            const sel = form.size === s.name;
             return (
               <div
-                key={s.v}
+                key={s.name}
                 onClick={() => {
-                  set("size", s.v);
+                  set("size", s.name);
                   set("servings", s.servings);
+                  // Pre-fill price field if blank, using the line's hint
+                  if (!form.price && s.price_hint) {
+                    set("price", String(s.price_hint));
+                  }
                 }}
                 style={{
                   padding: "10px 8px",
@@ -594,9 +652,10 @@ function StepCake({
                   textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: 13, fontWeight: 600 }}>{s.v}</div>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>{s.name}</div>
                 <div style={{ fontSize: 10.5, color: "var(--muted)", marginTop: 2 }}>
-                  {s.servings} servings · {s.price}
+                  {s.servings} servings
+                  {s.price_hint ? ` · ${fmtMoney(s.price_hint)}` : ""}
                 </div>
               </div>
             );
@@ -620,68 +679,143 @@ function StepCake({
 function StepTheme({
   form,
   set,
-  errors,
+  catalogue,
 }: {
   form: FormState;
   set: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
-  errors: Record<string, string>;
+  catalogue: AddonRow[];
 }) {
+  const schema = briefSchemaFor(form.productLine);
+
+  function toggleAddon(row: AddonRow) {
+    const next = form.selectedAddons.find((a) => a.id === row.id)
+      ? form.selectedAddons.filter((a) => a.id !== row.id)
+      : [
+          ...form.selectedAddons,
+          {
+            id: row.id,
+            name: row.name,
+            qty: row.default_qty,
+            price: row.default_cost,
+            notes: row.notes ?? undefined,
+          },
+        ];
+    set("selectedAddons", next);
+  }
+
   return (
     <div>
       <h2 style={stepHeading}>Describe the look</h2>
-      <p style={stepLede}>Paste the brief from their DM. References help.</p>
+      <p style={stepLede}>
+        Capture the structured brief — the fields below adapt to the product line.
+      </p>
 
-      <Field
-        label="Theme & vibe"
-        hint="Be specific — palette, motifs, message text"
-        error={errors.theme}
-      >
-        <TextInput
-          multiline
-          value={form.theme}
-          onChange={(e) => set("theme", e.target.value)}
-          placeholder="e.g. Pastel floral, ivory + dusty pink. Hand-piped peonies. Topper: 'Sixty & Glowing'"
-          error={!!errors.theme}
-        />
-      </Field>
+      <BriefForm
+        schema={schema}
+        brief={form.brief}
+        onChange={(b) => set("brief", b)}
+      />
 
-      <Field label="Add-ons" optional>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-          {ADD_ONS.map((a) => {
-            const selected = form.addOns.includes(a);
-            return (
-              <span
-                key={a}
-                onClick={() => {
-                  const nextAddOns = selected
-                    ? form.addOns.filter((x) => x !== a)
-                    : [...form.addOns, a];
-                  set("addOns", nextAddOns);
-                }}
-                style={{
-                  padding: "7px 11px",
-                  fontSize: 12.5,
-                  fontWeight: 600,
-                  borderRadius: 999,
-                  border: "1.5px solid " + (selected ? "var(--caramel)" : "var(--line)"),
-                  background: selected ? "var(--caramel-soft)" : "var(--surface)",
-                  color: selected ? "var(--caramel-deep)" : "var(--ink-soft)",
-                  cursor: "pointer",
-                  display: "inline-flex",
-                  gap: 4,
-                  alignItems: "center",
-                }}
-              >
-                {selected && <Icon.Check size={12} />}
-                {a}
-              </span>
-            );
-          })}
-        </div>
-      </Field>
+      <div style={addonsHeader}>Addons</div>
+      {ADDON_CATEGORIES.map((cat) => {
+        const items = catalogue.filter((r) => r.category === cat && r.is_active);
+        if (items.length === 0) return null;
+        return (
+          <div key={cat} style={{ marginBottom: 10 }}>
+            <div
+              style={{
+                fontSize: 11.5,
+                color: "var(--muted)",
+                marginBottom: 4,
+                textTransform: "capitalize",
+              }}
+            >
+              {cat}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {items.map((row) => {
+                const sel = form.selectedAddons.find((a) => a.id === row.id);
+                return (
+                  <button
+                    key={row.id}
+                    type="button"
+                    onClick={() => toggleAddon(row)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: "8px 10px",
+                      background: sel ? "var(--caramel-soft)" : "var(--surface)",
+                      border:
+                        "1.5px solid " + (sel ? "var(--caramel)" : "var(--line-soft)"),
+                      borderRadius: "var(--r)",
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      textAlign: "left",
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: 22,
+                        height: 22,
+                        borderRadius: 999,
+                        background: sel ? "var(--caramel)" : "transparent",
+                        border:
+                          "1.5px solid " + (sel ? "var(--caramel-deep)" : "var(--line)"),
+                        color: "var(--surface)",
+                        display: "grid",
+                        placeItems: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {sel && <Icon.Check size={12} />}
+                    </span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{row.name}</div>
+                      {row.notes && (
+                        <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 1 }}>
+                          {row.notes}
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 600 }}>
+                      {row.default_cost > 0 ? fmtMoney(row.default_cost) : "free"}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+
+      {form.selectedAddons.length > 0 && (
+        <Card
+          padding={12}
+          style={{
+            marginTop: 12,
+            background: "var(--sage-soft)",
+            border: "1px solid var(--sage)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
+            <span>Addons total</span>
+            <span>{fmtMoney(addonsTotal(form.selectedAddons))}</span>
+          </div>
+          <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 4 }}>
+            Add this to the recipe base when quoting on the next step.
+          </div>
+        </Card>
+      )}
     </div>
   );
 }
+
+const addonsHeader: React.CSSProperties = {
+  fontFamily: "DM Serif Display, serif",
+  fontSize: 17,
+  margin: "16px 0 10px",
+};
 
 // ---------- Step 4: Delivery ----------
 
@@ -1064,12 +1198,38 @@ function StepReview({
         <ReviewRow label="Customer" value={customerName} />
         <ReviewRow label="Order" value={form.title} />
         <ReviewRow
-          label="Flavor & size"
-          value={`${form.flavor} · ${form.size}${form.eggless ? " · Eggless" : ""}`}
+          label="Line"
+          value={`${form.productLine}${form.eggless ? " · eggless" : ""}`}
+          small
         />
-        <ReviewRow label="Theme" value={form.theme} small />
-        {form.addOns.length > 0 && (
-          <ReviewRow label="Add-ons" value={form.addOns.join(", ")} small />
+        <ReviewRow
+          label="Flavour & size"
+          value={`${form.flavor} · ${form.size}`}
+        />
+        {form.brief.occasion && (
+          <ReviewRow label="Occasion" value={form.brief.occasion} small />
+        )}
+        {form.brief.theme && <ReviewRow label="Theme" value={form.brief.theme} small />}
+        {form.brief.message?.text && (
+          <ReviewRow
+            label="Message"
+            value={
+              form.brief.message.text +
+              (form.brief.message.color ? ` (${form.brief.message.color})` : "")
+            }
+            small
+          />
+        )}
+        {form.selectedAddons.length > 0 && (
+          <ReviewRow
+            label="Addons"
+            value={
+              form.selectedAddons
+                .map((a) => `${a.name}${a.qty !== 1 ? ` ×${a.qty}` : ""}`)
+                .join(", ") + ` — ${fmtMoney(addonsTotal(form.selectedAddons))}`
+            }
+            small
+          />
         )}
         <ReviewRow
           label="Delivery"
