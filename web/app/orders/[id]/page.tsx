@@ -13,6 +13,7 @@ import { listAttachments } from "@/lib/attachments-actions";
 import { CustomisationSection } from "./CustomisationSection";
 import type { Customisation } from "@/lib/customisation";
 import type { AddonRow } from "@/app/admin/addons/actions";
+import { BillingSection } from "./BillingSection";
 
 export const dynamic = "force-dynamic";
 
@@ -70,14 +71,25 @@ export default async function OrderDetailPage({
     recipe = (recipes ?? []).find((r) => key.includes(r.name.toLowerCase())) ?? null;
   }
 
-  const [attachments, { data: addons }] = await Promise.all([
-    listAttachments("order", order.id),
-    supabase
-      .from("customisation_addons")
-      .select("*")
-      .eq("is_active", true)
-      .order("sort_order"),
-  ]);
+  const [attachments, { data: addons }, { data: invoiceRows }, { data: receiptRows }] =
+    await Promise.all([
+      listAttachments("order", order.id),
+      supabase
+        .from("customisation_addons")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order"),
+      supabase
+        .from("invoices")
+        .select("id, number, status, total, amount_paid, issue_date")
+        .eq("order_id", order.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("payment_receipts")
+        .select("id, number, amount, method, receipt_date")
+        .eq("order_id", order.id)
+        .order("created_at", { ascending: false }),
+    ]);
   const references = attachments.filter((a) => a.kind === "reference" || a.kind === "other");
   const delivered = attachments.filter((a) => a.kind === "delivered");
   const customisation = (order.customisation as Customisation | null) ?? {};
@@ -243,6 +255,15 @@ export default async function OrderDetailPage({
               </Card>
             </>
           )}
+
+          {/* Billing — invoices + receipts */}
+          <SectionHeader>Billing</SectionHeader>
+          <BillingSection
+            orderId={order.id}
+            balance={order.balance ?? 0}
+            invoices={(invoiceRows ?? []) as Array<{ id: string; number: string; status: string; total: number; amount_paid: number; issue_date: string }>}
+            receipts={(receiptRows ?? []) as Array<{ id: string; number: string; amount: number; method: string | null; receipt_date: string }>}
+          />
 
           {/* Customisation — theme/occasion/figurines + addons + cost rollup */}
           <SectionHeader>Customisation</SectionHeader>

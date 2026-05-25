@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { LoginForm } from "./LoginForm";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,7 @@ export default async function LoginPage({
         }}
       >
         <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <BrandLogo size={64} style={{ margin: "0 auto 12px" }} />
           <div
             style={{
               fontFamily: "DM Serif Display, serif",
