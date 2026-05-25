@@ -20,7 +20,7 @@ const ALL_ROUTES: Array<{
   { slug: "recipes", href: "/recipes", label: "Recipes", icon: "Cake", desc: "Menu + cost cards" },
   { slug: "inventory", href: "/inventory", label: "Inventory", icon: "Box", desc: "Stock + reorder" },
   { slug: "bakes", href: "/bakes", label: "Bakes", icon: "Calendar", desc: "Week schedule" },
-  { slug: "kitchen", href: "/kitchen", label: "Kitchen", icon: "Clock", desc: "Multi-timer rack" },
+  { slug: "kitchen", href: "/kitchen", label: "Timer rack", icon: "Clock", desc: "Full kitchen timer view" },
   { slug: "marketing", href: "/marketing", label: "Marketing", icon: "Megaphone", desc: "Campaigns + templates" },
   { slug: "reviews", href: "/reviews", label: "Reviews", icon: "Mail", desc: "T+2 feedback queue" },
   { slug: "books", href: "/books", label: "Books", icon: "Wallet", desc: "P&L, expenses, tax" },

@@ -74,12 +74,12 @@ export const MODES: Record<ModeId, ModeDef> = {
     desc: "Schedule, kitchen, timers",
     color: "caramel",
     iconKey: "Clock",
-    nav: ["home", "orders", "bakes", "kitchen", "more"],
-    morePrimary: ["kitchen", "bakes", "recipes", "inventory"],
+    nav: ["home", "orders", "bakes", "tools", "more"],
+    morePrimary: ["tools", "bakes", "recipes", "inventory"],
     home: {
       actions: [
         { id: "orders/new", label: "New order", icon: "Plus" },
-        { id: "kitchen", label: "Timers", icon: "Clock" },
+        { id: "tools", label: "Tools", icon: "Sparkle" },
         { id: "bakes", label: "Plan week", icon: "Calendar" },
         { id: "inventory", label: "Stock", icon: "Box" },
       ],
