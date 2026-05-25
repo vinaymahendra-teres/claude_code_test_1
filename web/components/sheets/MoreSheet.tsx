@@ -22,6 +22,7 @@ const ALL_ROUTES: Array<{
   { slug: "bakes", href: "/bakes", label: "Bakes", icon: "Calendar", desc: "Week schedule" },
   { slug: "kitchen", href: "/kitchen", label: "Timer rack", icon: "Clock", desc: "Full kitchen timer view" },
   { slug: "shopping", href: "/shopping", label: "Shopping", icon: "Box", desc: "Lists + auto-fill from stock & orders" },
+  { slug: "calendar", href: "/calendar", label: "Calendar", icon: "Calendar", desc: "Events, deadlines + overlays" },
   { slug: "marketing", href: "/marketing", label: "Marketing", icon: "Megaphone", desc: "Campaigns + templates" },
   { slug: "reviews", href: "/reviews", label: "Reviews", icon: "Mail", desc: "T+2 feedback queue" },
   { slug: "books", href: "/books", label: "Books", icon: "Wallet", desc: "P&L, expenses, tax" },
