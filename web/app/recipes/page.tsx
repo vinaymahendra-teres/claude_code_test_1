@@ -67,7 +67,7 @@ export default async function RecipesPage({
           <TabRow current={tab} />
         </div>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {list.map((r) => (
               <Link

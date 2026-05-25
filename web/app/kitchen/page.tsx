@@ -588,7 +588,7 @@ export default function KitchenPage() {
           </div>
         </header>
 
-        <div style={{ padding: "14px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "14px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {timers.timers.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--muted)" }}>
               <div

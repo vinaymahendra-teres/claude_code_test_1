@@ -102,7 +102,7 @@ export default async function CustomersPage({
           <SortTabs current={sort} branch={activeBranchId} />
         </div>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {/* Quick stats strip */}
           <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
             <StatTile label="Total" value={String(total)} tone="caramel" />

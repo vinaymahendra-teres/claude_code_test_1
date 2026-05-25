@@ -57,7 +57,7 @@ export default async function AdminUsersPage() {
           </div>
         </header>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           <Card padding={0}>
             {users.map((u, i) => (
               <div

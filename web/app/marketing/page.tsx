@@ -89,7 +89,7 @@ export default async function MarketingPage({
           <TabRow current={tab} />
         </div>
 
-        <div style={{ padding: "14px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "14px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {tab === "campaigns" ? (
             <>
               {/* ROAS card */}

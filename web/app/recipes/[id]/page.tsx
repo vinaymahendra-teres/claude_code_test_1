@@ -102,7 +102,7 @@ export default async function RecipeDetailPage({
           </div>
         </header>
 
-        <div style={{ padding: "0 0 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "0 0 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           <CakeArt tone={tone} label={r.name} style={{ width: "100%", height: 180 }} />
 
           <div style={{ padding: "18px 18px 0" }}>

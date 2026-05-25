@@ -110,7 +110,7 @@ export default async function ShoppingListDetail({
           </div>
         </header>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {/* Status + toolbar */}
           <Card
             padding={14}

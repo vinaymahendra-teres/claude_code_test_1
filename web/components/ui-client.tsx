@@ -397,6 +397,10 @@ export function Sheet({
         style={{
           width: "100%",
           maxHeight: snap === "full" ? "95%" : "85%",
+          // Prevents the inner flex column from refusing to shrink below the
+          // children's natural height (which would suppress the scroll trap on
+          // the body below).
+          minHeight: 0,
           background: "var(--bg)",
           borderTopLeftRadius: "var(--r-xl)",
           borderTopRightRadius: "var(--r-xl)",
@@ -414,6 +418,7 @@ export function Sheet({
             borderRadius: 999,
             background: "var(--line)",
             margin: "8px auto 4px",
+            flexShrink: 0,
           }}
         />
         {title && (
@@ -424,6 +429,7 @@ export function Sheet({
               alignItems: "center",
               justifyContent: "space-between",
               borderBottom: "1px solid var(--line-soft)",
+              flexShrink: 0,
             }}
           >
             <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18 }}>{title}</div>
@@ -432,7 +438,11 @@ export function Sheet({
             </IconButton>
           </div>
         )}
-        <div style={{ flex: 1, overflowY: "auto", padding: "8px 20px 0" }}>{children}</div>
+        {/* min-height: 0 is the magic ingredient — without it a flex item won't
+            shrink below content size, and overflow-y: auto never triggers. */}
+        <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "8px 20px 0" }}>
+          {children}
+        </div>
       </div>
     </div>
   );

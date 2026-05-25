@@ -93,7 +93,7 @@ export default async function ShoppingPage({
           <TabRow current={tab} />
         </div>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {rows.length === 0 ? (
             <Card style={{ textAlign: "center", padding: 28 }}>
               <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>

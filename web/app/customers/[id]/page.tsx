@@ -106,7 +106,7 @@ export default async function CustomerDetailPage({
           </div>
         </header>
 
-        <div style={{ padding: "0 0 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "0 0 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {/* Profile hero */}
           <div style={{ padding: "12px 22px 20px", textAlign: "center" }}>
             <Avatar

@@ -86,7 +86,7 @@ export default async function InventoryPage({
           <TabRow current={tab} lowCount={lowCount} />
         </div>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {lowCount > 0 && tab !== "low" && (
             <Card
               style={{

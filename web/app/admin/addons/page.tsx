@@ -64,7 +64,7 @@ export default async function AddonsPage() {
           </div>
         </header>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {Array.from(grouped.entries()).map(([cat, list]) => (
             <div key={cat} style={{ marginBottom: 16 }}>
               <SectionHeader>{cat}</SectionHeader>

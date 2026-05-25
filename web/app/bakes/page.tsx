@@ -86,7 +86,7 @@ export default async function BakesPage() {
           </div>
         </header>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
             <StatTile label="Cakes" value={String(totalCakes)} tone="caramel" />
             <StatTile label="Oven hrs" value={totalHours.toFixed(1)} tone="rose" />

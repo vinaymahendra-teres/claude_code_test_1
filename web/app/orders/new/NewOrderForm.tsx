@@ -236,7 +236,7 @@ export function NewOrderForm({
           </div>
         </div>
 
-        <div style={{ padding: "16px 18px 120px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "16px 18px 120px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {step === 0 && (
             <StepCustomer customers={customers} form={form} set={set} errors={errors} />
           )}

@@ -109,7 +109,7 @@ export function CalendarView({
   const nextMonth = shiftMonth(month, 1);
 
   return (
-    <div style={{ padding: "10px 18px 14px", overflowY: "auto", flex: 1 }}>
+    <div style={{ padding: "10px 18px 14px", overflowY: "auto", flex: 1, minHeight: 0 }}>
       {/* Month nav + view toggle */}
       <div
         style={{

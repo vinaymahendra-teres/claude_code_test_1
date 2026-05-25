@@ -116,7 +116,7 @@ export default async function OrderDetailPage({
           </div>
         </header>
 
-        <div style={{ padding: "14px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "14px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {/* Hero */}
           <CakeArt
             tone={(customer?.avatar_tone as "caramel" | "rose" | "sage" | "plum") || "caramel"}

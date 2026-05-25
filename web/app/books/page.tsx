@@ -78,7 +78,7 @@ export default async function BooksPage({
           <TabRow current={tab} />
         </div>
 
-        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
+        <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {tab === "overview" && (
             <Overview expenses={expenses ?? []} monthly={monthly ?? []} />
           )}
