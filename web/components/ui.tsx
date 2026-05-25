@@ -3,6 +3,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { statusColor, statusLabel, type OrderStatus } from "@/lib/status";
+import { fmtMoney } from "@/lib/format";
 
 // ---------- Card ----------
 
@@ -296,6 +297,108 @@ export function Field({
       )}
       {error && <div style={{ fontSize: 11.5, color: "var(--danger)", marginTop: 5 }}>{error}</div>}
     </label>
+  );
+}
+
+// ---------- Bars (mini grouped bar chart) ----------
+// Used by Books → Overview 6-month trend and Reports → Cash flow.
+
+export function Bars({
+  data,
+  height = 60,
+  color = "var(--caramel)",
+  secondary = "var(--rose)",
+}: {
+  data: { in: number; out: number }[];
+  height?: number;
+  color?: string;
+  secondary?: string;
+}) {
+  const max = Math.max(...data.map((d) => Math.max(d.in || 0, d.out || 0)));
+  return (
+    <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height }}>
+      {data.map((d, i) => (
+        <div
+          key={i}
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "flex-end",
+            gap: 2,
+            height: "100%",
+          }}
+        >
+          <div
+            style={{
+              flex: 1,
+              background: color,
+              borderRadius: 3,
+              height: ((d.in / max) * 100) + "%",
+              minHeight: 2,
+            }}
+          />
+          <div
+            style={{
+              flex: 1,
+              background: secondary,
+              opacity: 0.7,
+              borderRadius: 3,
+              height: ((d.out / max) * 100) + "%",
+              minHeight: 2,
+            }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------- StmtRow (statement row helper for Reports) ----------
+
+export function StmtRow({
+  label,
+  value,
+  bold,
+  indent,
+  divider,
+}: {
+  label: string;
+  value: number | string;
+  bold?: boolean;
+  indent?: boolean;
+  divider?: boolean;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "baseline",
+        padding: "8px 0",
+        borderBottom: divider ? "1px solid var(--line-soft)" : "none",
+        paddingLeft: indent ? 14 : 0,
+      }}
+    >
+      <span
+        style={{
+          fontSize: bold ? 13.5 : 13,
+          fontWeight: bold ? 700 : 400,
+          color: bold ? "var(--ink)" : "var(--ink-soft)",
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{
+          fontSize: bold ? 14 : 13,
+          fontWeight: bold ? 700 : 500,
+          fontFamily: "JetBrains Mono, monospace",
+          color: typeof value === "number" && value < 0 ? "var(--danger)" : "var(--ink)",
+        }}
+      >
+        {typeof value === "number" ? fmtMoney(value) : value}
+      </span>
+    </div>
   );
 }
 
