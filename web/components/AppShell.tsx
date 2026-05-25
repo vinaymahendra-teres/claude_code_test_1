@@ -39,13 +39,15 @@ export const MODES: Record<ModeId, ModeDef> = {
     nav: ["home", "orders", "recipes", "inventory", "more"],
     morePrimary: ["recipes", "inventory", "shopping", "tools"],
     home: {
+      // Planning is build-the-menu, not take-the-work. New Order is not a
+      // primary action here — operators in this mode are setting up.
       actions: [
-        { id: "orders/new", label: "New order", icon: "Plus" },
+        { id: "recipes", label: "Recipes", icon: "Cake" },
         { id: "tools", label: "Scale", icon: "Sparkle" },
         { id: "inventory", label: "Restock", icon: "Box" },
-        { id: "recipes", label: "Recipes", icon: "Cake" },
+        { id: "shopping", label: "Shopping", icon: "Receipt" },
       ],
-      sections: ["hero", "quickActions", "lowStock", "tomorrow"],
+      sections: ["hero", "quickActions", "lowStock", "openLists", "upcomingEvents"],
     },
   },
   marketing: {
@@ -64,7 +66,7 @@ export const MODES: Record<ModeId, ModeDef> = {
         { id: "reviews", label: "Reviews", icon: "Mail" },
         { id: "customers", label: "People", icon: "Users" },
       ],
-      sections: ["hero", "quickActions", "occasions", "inbox", "reviews", "campaign", "tomorrow"],
+      sections: ["hero", "quickActions", "campaigns", "leads", "reviewsDue", "upcomingEvents"],
     },
   },
   operations: {
@@ -83,7 +85,7 @@ export const MODES: Record<ModeId, ModeDef> = {
         { id: "bakes", label: "Plan week", icon: "Calendar" },
         { id: "inventory", label: "Stock", icon: "Box" },
       ],
-      sections: ["hero", "quickActions", "today", "tomorrow", "inbox", "lowStock"],
+      sections: ["hero", "quickActions", "today", "tomorrow", "lowStock"],
     },
   },
   finance: {
@@ -96,13 +98,15 @@ export const MODES: Record<ModeId, ModeDef> = {
     nav: ["home", "orders", "books", "reports", "more"],
     morePrimary: ["books", "reports"],
     home: {
+      // Finance closes books, doesn't open tickets. Expense entry, reports
+      // and compliance dominate; no New Order tile.
       actions: [
         { id: "books?tab=transactions", label: "Expense", icon: "Wallet" },
-        { id: "orders/new", label: "New order", icon: "Plus" },
-        { id: "books", label: "Books", icon: "Receipt" },
         { id: "reports", label: "Reports", icon: "Doc" },
+        { id: "books", label: "Books", icon: "Receipt" },
+        { id: "books?tab=tax", label: "Tax", icon: "Doc" },
       ],
-      sections: ["hero", "quickActions", "compliance", "tomorrow"],
+      sections: ["hero", "quickActions", "complianceDue", "monthlySnapshot", "outstanding"],
     },
   },
 };

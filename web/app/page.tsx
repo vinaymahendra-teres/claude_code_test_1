@@ -1,13 +1,12 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import { fmtMoney, fmtCompactMoney, fmtDate } from "@/lib/format";
 import { PhoneShell } from "@/components/PhoneShell";
 import { HomeHeader } from "@/components/home/HomeHeader";
-import { QuickActions } from "@/components/home/QuickActions";
+import { HomeDashboard } from "@/components/home/HomeDashboard";
+import type { HomeData } from "@/components/home/sections";
 import { auth } from "@/auth";
 
-// Anchor "today" to the seed-data baseline so the prototype's numbers stay readable.
-// When real time-aware queries land, swap to new Date().toISOString().slice(0, 10).
+// Anchored to the seed-data baseline so the prototype's numbers stay readable.
 const TODAY = "2026-05-24";
 
 function plusDays(iso: string, n: number) {
@@ -16,6 +15,8 @@ function plusDays(iso: string, n: number) {
   return d.toISOString().slice(0, 10);
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const session = await auth();
   const userName = session?.user?.name ?? "";
@@ -23,323 +24,241 @@ export default async function HomePage() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
-  // Active orders (non-delivered, non-draft) — used for pending balance + active count
-  const { data: activeOrders } = await supabase
-    .from("orders")
-    .select("price, balance, delivery_date, status")
-    .not("status", "in", "(delivered,draft)");
-
-  // Today's bakes
-  const { count: todaysCount } = await supabase
-    .from("orders")
-    .select("id", { count: "exact", head: true })
-    .eq("delivery_date", TODAY);
-
-  // Tomorrow's deliveries — show up to 4
-  const tomorrow = plusDays(TODAY, 1);
-  const { data: tomorrowOrders } = await supabase
-    .from("orders")
-    .select("id, title, flavor, delivery_slot, customer_id, customers (name, avatar_tone)")
-    .eq("delivery_date", tomorrow)
-    .order("delivery_slot");
-
-  // Low stock items
-  // Supabase JS doesn't support direct column-vs-column filters, so we pull the
-  // small inventory table and filter in memory. Production: replace with a SQL
-  // view (e.g. `create view low_stock_items as select * from inventory_items
-  // where qty < reorder_at;`) and query that view directly.
-  const { data: allInventory } = await supabase
-    .from("inventory_items")
-    .select("id, name, qty, unit, reorder_at");
-  const lowStockFiltered = (allInventory ?? []).filter(
-    (i) => Number(i.qty) < Number(i.reorder_at),
-  );
-
-  // Compute headline numbers
-  const weekStart = TODAY;
   const weekEnd = plusDays(TODAY, 6);
-  const weekRevenue = (activeOrders ?? [])
-    .filter((o) => o.delivery_date >= weekStart && o.delivery_date <= weekEnd)
-    .reduce((s, o) => s + (o.price ?? 0), 0);
-  const pendingBalance = (activeOrders ?? []).reduce(
-    (s, o) => s + (o.balance ?? 0),
-    0,
-  );
-  const activeCount = activeOrders?.length ?? 0;
+  const tomorrow = plusDays(TODAY, 1);
+  const twoDaysAgo = plusDays(TODAY, -2);
+  const ninetyDaysAgo = plusDays(TODAY, -90);
+  const eventsHorizon = plusDays(TODAY, 45);
+  const month = TODAY.slice(0, 7);
 
-  // First-run gate — if Supabase hasn't been migrated yet, prompt the user
-  const isFirstRun = activeOrders == null && allInventory == null;
+  // Fetch every dataset any section might need in one parallel volley.
+  const [
+    { data: activeOrders },
+    { data: todayOrderRows },
+    { data: tomorrowOrderRows },
+    { data: allInventory },
+    { data: openListsRows },
+    { data: itemAgg },
+    { data: campaignRows },
+    { data: newCustomers },
+    { data: deliveredOrders },
+    { data: complianceRows },
+    { data: blockedRows },
+    { data: monthlyRow },
+  ] = await Promise.all([
+    supabase
+      .from("orders")
+      .select("id, title, flavor, price, balance, delivery_date, delivery_slot, status, customer_id, customers (name)")
+      .not("status", "in", "(delivered,draft,cancelled)"),
+    supabase
+      .from("orders")
+      .select("id, title, flavor, delivery_slot, delivery_date, price, status, customers (name)")
+      .eq("delivery_date", TODAY)
+      .order("delivery_slot"),
+    supabase
+      .from("orders")
+      .select("id, title, flavor, delivery_slot, delivery_date, price, status, customers (name)")
+      .eq("delivery_date", tomorrow)
+      .order("delivery_slot"),
+    supabase.from("inventory_items").select("id, name, qty, unit, reorder_at"),
+    supabase
+      .from("shopping_lists")
+      .select("id, name, created_at")
+      .eq("status", "open")
+      .order("created_at", { ascending: false }),
+    supabase.from("shopping_list_items").select("list_id, checked, estimated_cost"),
+    supabase.from("campaigns").select("data").limit(20),
+    supabase
+      .from("customers")
+      .select("id, name, area, since, order_count")
+      .gte("since", ninetyDaysAgo)
+      .order("since", { ascending: false })
+      .limit(20),
+    supabase
+      .from("orders")
+      .select("id, title, delivery_date, feedback_received, rating, customers (name)")
+      .eq("status", "delivered")
+      .lte("delivery_date", twoDaysAgo)
+      .eq("feedback_received", "N")
+      .order("delivery_date", { ascending: false })
+      .limit(8),
+    supabase
+      .from("compliance_items")
+      .select("id, item, due_date, status")
+      .eq("status", "open")
+      .lte("due_date", plusDays(TODAY, 60))
+      .order("due_date"),
+    supabase
+      .from("blocked_dates")
+      .select("date, reason, type")
+      .gte("date", TODAY)
+      .lte("date", eventsHorizon)
+      .order("date"),
+    supabase.from("monthly_summary").select("month, income, expense, profit").eq("month", month).maybeSingle(),
+  ]);
+
+  // ---------- Roll-ups ----------
+
+  const lowStock = (allInventory ?? [])
+    .filter((i) => Number(i.qty) < Number(i.reorder_at))
+    .map((i) => ({
+      id: i.id,
+      name: i.name,
+      qty: Number(i.qty),
+      unit: i.unit,
+      reorder_at: Number(i.reorder_at),
+    }));
+
+  const weekRevenue = (activeOrders ?? [])
+    .filter((o) => o.delivery_date && o.delivery_date >= TODAY && o.delivery_date <= weekEnd)
+    .reduce((s, o) => s + (o.price ?? 0), 0);
+  const pendingBalance = (activeOrders ?? []).reduce((s, o) => s + (o.balance ?? 0), 0);
+  const activeCount = activeOrders?.length ?? 0;
+  const todaysCount = todayOrderRows?.length ?? 0;
+
+  const mapOrder = (
+    o: {
+      id: string;
+      title: string | null;
+      flavor: string | null;
+      delivery_slot: string | null;
+      delivery_date: string | null;
+      price: number | null;
+      status: string;
+      customers: { name: string | null } | { name: string | null }[] | null;
+    },
+  ) => {
+    const cust = Array.isArray(o.customers) ? o.customers[0] : o.customers;
+    return {
+      id: o.id,
+      title: o.title,
+      flavor: o.flavor,
+      delivery_slot: o.delivery_slot,
+      delivery_date: o.delivery_date,
+      price: o.price,
+      status: o.status,
+      customer_name: cust?.name ?? null,
+    };
+  };
+  const todayOrders = (todayOrderRows ?? []).map(mapOrder);
+  const tomorrowOrders = (tomorrowOrderRows ?? []).map(mapOrder);
+
+  // Shopping list aggregates
+  const aggMap = new Map<string, { total: number; checked: number; cost: number }>();
+  for (const it of (itemAgg as { list_id: string; checked: boolean; estimated_cost: number }[] | null) ?? []) {
+    const a = aggMap.get(it.list_id) ?? { total: 0, checked: 0, cost: 0 };
+    a.total += 1;
+    if (it.checked) a.checked += 1;
+    a.cost += it.estimated_cost ?? 0;
+    aggMap.set(it.list_id, a);
+  }
+  const openLists = (openListsRows ?? []).map((l) => {
+    const a = aggMap.get(l.id) ?? { total: 0, checked: 0, cost: 0 };
+    return { id: l.id, name: l.name, total: a.total, checked: a.checked, cost: a.cost };
+  });
+
+  // Campaigns (data is jsonb)
+  const campaigns = (campaignRows ?? [])
+    .map((r) => r.data as { id: string; name?: string; status?: string; audience?: string })
+    .map((c) => ({
+      id: c.id,
+      name: c.name ?? "(unnamed)",
+      status: c.status ?? "draft",
+      audience: c.audience,
+    }));
+
+  const newLeads = (newCustomers ?? [])
+    .filter((c) => (c.order_count ?? 0) === 0)
+    .slice(0, 5)
+    .map((c) => ({ id: c.id, name: c.name, area: c.area, since: c.since }));
+
+  const reviewsDue = (deliveredOrders ?? [])
+    .map((o) => {
+      const cust = Array.isArray(o.customers) ? o.customers[0] : o.customers;
+      return {
+        id: o.id,
+        title: o.title,
+        customer_name: cust?.name ?? null,
+        delivery_date: o.delivery_date,
+      };
+    })
+    .slice(0, 5);
+
+  const complianceDue = (complianceRows ?? []).slice(0, 5).map((c) => {
+    const d = new Date(c.due_date);
+    const days = Math.round(
+      (d.getTime() - new Date(TODAY).getTime()) / 86400000,
+    );
+    return { id: c.id, item: c.item, due_date: c.due_date, days };
+  });
+
+  // Upcoming events = blocked_dates (festivals/internal) + compliance items
+  // ordered by date, max 5.
+  const upcomingEvents: HomeData["upcomingEvents"] = [
+    ...(blockedRows ?? []).map((b) => ({
+      id: `block-${b.date}`,
+      title: b.reason,
+      date: b.date,
+      kind: (b.type === "festival" ? "festival" : "event") as "festival" | "event",
+      meta: b.type === "festival" ? "Festival · plan ahead" : undefined,
+    })),
+    ...(complianceRows ?? []).map((c) => ({
+      id: `comp-${c.id}`,
+      title: c.item,
+      date: c.due_date,
+      kind: "compliance" as const,
+      meta: "Compliance deadline",
+    })),
+  ]
+    .filter((e) => e.date >= TODAY && e.date <= eventsHorizon)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 6);
+
+  const outstandingOrders = (activeOrders ?? [])
+    .filter((o) => (o.balance ?? 0) > 0)
+    .sort((a, b) => (b.balance ?? 0) - (a.balance ?? 0))
+    .slice(0, 6)
+    .map((o) => {
+      const cust = Array.isArray(o.customers) ? o.customers[0] : o.customers;
+      return {
+        id: o.id,
+        title: o.title,
+        customer_name: cust?.name ?? null,
+        balance: o.balance ?? 0,
+      };
+    });
+
+  const data: HomeData = {
+    weekRevenue,
+    pendingBalance,
+    todaysCount,
+    activeCount,
+    todayOrders,
+    tomorrowOrders,
+    lowStock,
+    openLists,
+    campaigns,
+    newLeads,
+    reviewsDue,
+    complianceDue,
+    upcomingEvents,
+    monthly: monthlyRow
+      ? {
+          month: monthlyRow.month,
+          income: monthlyRow.income ?? 0,
+          expense: monthlyRow.expense ?? 0,
+          profit: monthlyRow.profit ?? 0,
+        }
+      : null,
+    outstandingOrders,
+  };
 
   return (
     <PhoneShell>
       <div data-screen-label="Home">
         <HomeHeader dateLabel="Sunday, 24 May" userName={userName} />
-
-        <div style={{ padding: "6px 18px 100px", overflowY: "auto", flex: 1 }}>
-          {isFirstRun ? (
-            <FirstRunNotice />
-          ) : (
-            <>
-              <QuickActions />
-
-              {/* Hero card — this-week revenue */}
-                  <div
-                    style={{
-                      marginTop: 20,
-                      borderRadius: 18,
-                      background:
-                        "linear-gradient(135deg, oklch(0.30 0.08 50), oklch(0.22 0.04 50))",
-                      color: "oklch(0.96 0.02 70)",
-                      padding: 0,
-                      overflow: "hidden",
-                      position: "relative",
-                    }}
-                  >
-                    <div style={{ padding: "18px 18px 16px" }}>
-                      <div
-                        style={{
-                          fontSize: 11.5,
-                          opacity: 0.6,
-                          letterSpacing: "0.06em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        This week
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "baseline",
-                          gap: 6,
-                          marginTop: 4,
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontFamily: "DM Serif Display, serif",
-                            fontSize: 34,
-                            lineHeight: 1,
-                          }}
-                        >
-                          {fmtMoney(weekRevenue)}
-                        </span>
-                        <span style={{ fontSize: 13, opacity: 0.7 }}>booked</span>
-                      </div>
-                      <div style={{ display: "flex", gap: 18, marginTop: 14 }}>
-                        <div>
-                          <div style={{ fontSize: 11, opacity: 0.6 }}>Pending balance</div>
-                          <div style={{ fontSize: 15, fontWeight: 600, marginTop: 2 }}>
-                            {fmtMoney(pendingBalance)}
-                          </div>
-                        </div>
-                        <div
-                          style={{ width: 1, background: "oklch(0.99 0.01 75 / 0.15)" }}
-                        />
-                        <div>
-                          <div style={{ fontSize: 11, opacity: 0.6 }}>Today&apos;s bakes</div>
-                          <div style={{ fontSize: 15, fontWeight: 600, marginTop: 2 }}>
-                            {todaysCount ?? 0}{" "}
-                            {todaysCount === 1 ? "cake" : "cakes"}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        borderTop: "1px solid oklch(0.99 0.01 75 / 0.12)",
-                        padding: "10px 18px",
-                        fontSize: 12.5,
-                        opacity: 0.85,
-                      }}
-                    >
-                      {activeCount} active order{activeCount === 1 ? "" : "s"}
-                    </div>
-                  </div>
-
-                  {/* Tomorrow */}
-                  {tomorrowOrders && tomorrowOrders.length > 0 && (
-                    <>
-                      <SectionHeader>Tomorrow</SectionHeader>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: 10,
-                          overflowX: "auto",
-                          margin: "0 -18px",
-                          padding: "0 18px 4px",
-                          scrollbarWidth: "none",
-                        }}
-                      >
-                        {tomorrowOrders.map((o) => {
-                          const cust = Array.isArray(o.customers)
-                            ? o.customers[0]
-                            : (o.customers as { name: string } | null);
-                          return (
-                            <div
-                              key={o.id}
-                              style={{
-                                flexShrink: 0,
-                                width: 200,
-                                background: "var(--surface)",
-                                border: "1px solid var(--line-soft)",
-                                borderRadius: "var(--r-lg)",
-                                padding: 12,
-                                boxShadow: "var(--shadow-sm)",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  height: 100,
-                                  borderRadius: 12,
-                                  background:
-                                    "repeating-linear-gradient(45deg, var(--caramel-soft) 0 8px, transparent 8px 16px), var(--surface-2)",
-                                  marginBottom: 10,
-                                  display: "grid",
-                                  placeItems: "center",
-                                  fontSize: 12,
-                                  color: "var(--ink-soft)",
-                                }}
-                              >
-                                {o.flavor}
-                              </div>
-                              <div
-                                style={{ fontSize: 12.5, fontWeight: 600, lineHeight: 1.3 }}
-                              >
-                                {cust?.name ?? "—"}
-                              </div>
-                              <div
-                                style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 2 }}
-                              >
-                                {o.delivery_slot}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </>
-                  )}
-
-                  {/* Low stock */}
-                  {lowStockFiltered.length > 0 && (
-                    <>
-                      <SectionHeader>Stock running low</SectionHeader>
-                      <div
-                        style={{
-                          background: "var(--surface)",
-                          border: "1px solid var(--line-soft)",
-                          borderRadius: "var(--r-lg)",
-                          overflow: "hidden",
-                        }}
-                      >
-                        {lowStockFiltered.slice(0, 3).map((item, i, arr) => (
-                          <div
-                            key={item.id}
-                            style={{
-                              padding: "12px 14px",
-                              borderBottom:
-                                i < arr.length - 1
-                                  ? "1px solid var(--line-soft)"
-                                  : "none",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <div>
-                              <div style={{ fontSize: 13.5, fontWeight: 600 }}>
-                                {item.name}
-                              </div>
-                              <div
-                                style={{ fontSize: 11.5, color: "var(--muted)", marginTop: 2 }}
-                              >
-                                {item.qty}
-                                {item.unit} left · reorder at {item.reorder_at}
-                                {item.unit}
-                              </div>
-                            </div>
-                            <span
-                              style={{
-                                background: "oklch(0.95 0.07 80)",
-                                color: "oklch(0.42 0.12 70)",
-                                border: "1px solid oklch(0.82 0.12 80)",
-                                fontSize: 10.5,
-                                fontWeight: 700,
-                                textTransform: "uppercase",
-                                letterSpacing: "0.04em",
-                                padding: "3px 8px",
-                                borderRadius: 999,
-                              }}
-                            >
-                              Low
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-            </>
-          )}
-        </div>
+        <HomeDashboard data={data} />
       </div>
     </PhoneShell>
-  );
-}
-
-function SectionHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <h3
-      style={{
-        fontFamily: "DM Serif Display, serif",
-        fontSize: 15,
-        fontWeight: 400,
-        margin: "20px 4px 10px",
-        color: "var(--ink)",
-        letterSpacing: "0.005em",
-        textTransform: "uppercase",
-        opacity: 0.7,
-      }}
-    >
-      {children}
-    </h3>
-  );
-}
-
-function FirstRunNotice() {
-  return (
-    <div
-      style={{
-        background: "var(--surface)",
-        border: "1px dashed var(--line)",
-        borderRadius: "var(--r-lg)",
-        padding: 18,
-        textAlign: "center",
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "DM Serif Display, serif",
-          fontSize: 18,
-          marginBottom: 8,
-        }}
-      >
-        Supabase schema not applied yet
-      </div>
-      <p
-        style={{
-          fontSize: 12.5,
-          color: "var(--muted)",
-          lineHeight: 1.5,
-          margin: "0 0 14px",
-        }}
-      >
-        Apply the migration in <code>web/supabase/migrations/0001_initial_schema.sql</code>{" "}
-        in your Supabase dashboard (SQL editor), then run{" "}
-        <code>npm run seed</code> from the <code>web/</code> directory to import the
-        sample data.
-      </p>
-      <p style={{ fontSize: 11.5, color: "var(--muted)" }}>
-        Page will auto-populate on next refresh.
-      </p>
-    </div>
   );
 }
