@@ -37,7 +37,7 @@ export const MODES: Record<ModeId, ModeDef> = {
     color: "plum",
     iconKey: "Sparkle",
     nav: ["home", "orders", "recipes", "inventory", "more"],
-    morePrimary: ["recipes", "inventory", "tools"],
+    morePrimary: ["recipes", "inventory", "shopping", "tools"],
     home: {
       actions: [
         { id: "orders/new", label: "New order", icon: "Plus" },
@@ -75,7 +75,7 @@ export const MODES: Record<ModeId, ModeDef> = {
     color: "caramel",
     iconKey: "Clock",
     nav: ["home", "orders", "bakes", "tools", "more"],
-    morePrimary: ["tools", "bakes", "recipes", "inventory"],
+    morePrimary: ["tools", "bakes", "recipes", "inventory", "shopping"],
     home: {
       actions: [
         { id: "orders/new", label: "New order", icon: "Plus" },
