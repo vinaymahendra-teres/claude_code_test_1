@@ -8,6 +8,8 @@ import { fmtMoney, fmtCompactMoney, fmtDate, fmtRelative } from "@/lib/format";
 
 import { AddExpenseButton } from "./AddExpenseButton";
 import { EditExpenseSheet } from "./EditExpenseSheet";
+import { ComplianceItemSheet } from "./ComplianceItemSheet";
+import { AddComplianceButton } from "./AddComplianceButton";
 
 export const revalidate = 60;
 
@@ -439,7 +441,7 @@ function TaxView({
         />
       </Card>
 
-      <SectionHeader>Compliance schedule</SectionHeader>
+      <SectionHeader action={<AddComplianceButton />}>Compliance schedule</SectionHeader>
       <Card padding={0}>
         {withDays.map((c, i) => {
           const p = palette[c.status];
@@ -485,6 +487,11 @@ function TaxView({
               <Pill tone={c.status === "overdue" ? "danger" : c.status === "urgent" ? "warn" : c.status === "soon" ? "caramel" : "ok"} size="xs">
                 {label}
               </Pill>
+              <ComplianceItemSheet
+                id={c.id}
+                label={c.item}
+                dueLabel={`Due ${c.due_date} · ${label}`}
+              />
             </div>
           );
         })}
