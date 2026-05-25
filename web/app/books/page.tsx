@@ -6,6 +6,8 @@ import { Card, SectionHeader, Pill, Bars } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtCompactMoney, fmtDate, fmtRelative } from "@/lib/format";
 
+import { AddExpenseButton } from "./AddExpenseButton";
+
 export const dynamic = "force-dynamic";
 
 const TABS = [
@@ -241,6 +243,9 @@ function Transactions({
 
   return (
     <div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+        <AddExpenseButton />
+      </div>
       <div
         style={{
           display: "flex",

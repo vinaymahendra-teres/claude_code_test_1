@@ -6,6 +6,7 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, CakeArt, StatusPill, SectionHeader, Pill, Avatar } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate } from "@/lib/format";
+import { advanceStage } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,13 @@ const STAGES: { key: string; label: string }[] = [
   { key: "ready", label: "Ready" },
   { key: "delivered", label: "Delivered" },
 ];
+
+const NEXT_STAGE_LABEL: Record<string, string> = {
+  draft: "Confirm order",
+  confirmed: "Start production",
+  "in-production": "Mark ready",
+  ready: "Mark delivered",
+};
 
 export default async function OrderDetailPage({
   params,
@@ -104,8 +112,11 @@ export default async function OrderDetailPage({
 
           {/* Stage tracker */}
           <Card style={{ marginTop: 16 }} padding={14}>
-            <div style={{ fontSize: 11.5, color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 12 }}>
-              Progress
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <div style={{ fontSize: 11.5, color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                Progress
+              </div>
+              <StatusPill status={order.status} dot={false} />
             </div>
             <div style={{ display: "flex", gap: 4 }}>
               {STAGES.map((s, i) => {
@@ -120,6 +131,30 @@ export default async function OrderDetailPage({
                 );
               })}
             </div>
+            {NEXT_STAGE_LABEL[order.status] && (
+              <form
+                action={advanceStage.bind(null, order.id, order.status)}
+                style={{ marginTop: 14 }}
+              >
+                <button
+                  type="submit"
+                  style={{
+                    width: "100%",
+                    padding: "11px 16px",
+                    background: "var(--caramel)",
+                    color: "var(--surface)",
+                    border: "1px solid var(--caramel-deep)",
+                    borderRadius: "var(--r)",
+                    fontFamily: "inherit",
+                    fontWeight: 600,
+                    fontSize: 14,
+                    cursor: "pointer",
+                  }}
+                >
+                  {NEXT_STAGE_LABEL[order.status]} →
+                </button>
+              </form>
+            )}
           </Card>
 
           {/* Customer */}
