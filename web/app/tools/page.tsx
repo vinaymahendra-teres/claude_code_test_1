@@ -50,7 +50,7 @@ export default function ToolsPage() {
                 Tools
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
-                Timers + bakery converters
+                Timers + Converters
               </div>
             </div>
           </div>
@@ -63,38 +63,59 @@ export default function ToolsPage() {
         {/* Tool selector chips */}
         <div
           style={{
-            display: "flex",
-            gap: 6,
-            overflowX: "auto",
-            padding: "6px 18px 10px",
-            scrollbarWidth: "none",
+            position: "relative",
             borderBottom: "1px solid var(--line-soft)",
           }}
         >
-          {TOOLS.map((t) => {
-            const active = tool === t.key;
-            return (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => setTool(t.key)}
-                style={{
-                  flexShrink: 0,
-                  padding: "7px 13px",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  borderRadius: 999,
-                  border: "1.5px solid " + (active ? "var(--caramel)" : "var(--line)"),
-                  background: active ? "var(--caramel)" : "var(--surface)",
-                  color: active ? "var(--surface)" : "var(--ink-soft)",
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                }}
-              >
-                {t.label}
-              </button>
-            );
-          })}
+          <div
+            className="chip-scroll"
+            style={{
+              display: "flex",
+              gap: 6,
+              overflowX: "auto",
+              padding: "6px 18px 10px",
+              // Hide both Firefox and WebKit scrollbars while keeping the
+              // overflow scrollable; the fade-mask hints at more content.
+              scrollbarWidth: "none",
+              // Smooth fade-out at the right edge so the cut chip reads as
+              // "scroll for more" instead of broken layout.
+              maskImage:
+                "linear-gradient(to right, transparent 0, black 16px, black calc(100% - 24px), transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0, black 16px, black calc(100% - 24px), transparent 100%)",
+              // Snap chips to the start so taps land cleanly after scrolling.
+              scrollSnapType: "x proximity",
+              scrollPaddingLeft: 18,
+              scrollPaddingRight: 24,
+            }}
+          >
+            {TOOLS.map((t) => {
+              const active = tool === t.key;
+              return (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setTool(t.key)}
+                  style={{
+                    flexShrink: 0,
+                    padding: "7px 13px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    borderRadius: 999,
+                    border: "1.5px solid " + (active ? "var(--caramel)" : "var(--line)"),
+                    background: active ? "var(--caramel)" : "var(--surface)",
+                    color: active ? "var(--surface)" : "var(--ink-soft)",
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                    scrollSnapAlign: "start",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div style={{ padding: "14px 18px 100px", overflowY: "auto", flex: 1 }}>
