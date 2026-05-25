@@ -52,10 +52,13 @@ function DefaultLeftPanel() {
         where the orders come from: in your hand, between piping bags.
       </p>
       <h2>Modules</h2>
-      <p>
-        <Link href="/" style={{ color: "var(--ink-soft)", textDecoration: "none" }}>Home</Link> ·{" "}
-        <Link href="/orders" style={{ color: "var(--ink-soft)", textDecoration: "none" }}>Orders</Link> ·{" "}
-        Bakes · People · Books · Reports
+      <p style={{ fontSize: 12.5, lineHeight: 1.6 }}>
+        <Link href="/" style={panelLink}>Home</Link> ·{" "}
+        <Link href="/orders" style={panelLink}>Orders</Link> ·{" "}
+        <Link href="/bakes" style={panelLink}>Bakes</Link> ·{" "}
+        <Link href="/customers" style={panelLink}>People</Link> ·{" "}
+        <Link href="/books" style={panelLink}>Books</Link> ·{" "}
+        <Link href="/reports" style={panelLink}>Reports</Link>
       </p>
     </>
   );
@@ -69,13 +72,19 @@ function DefaultRightPanel() {
         <span>Hyderabad</span>
       </div>
       <p style={{ fontSize: 13 }}>
-        Next.js + Supabase edition. Live data served from Postgres on every request.
+        A home bakery run by Swetha &amp; Shreya, baking custom cakes, cupcakes, brownies, tubs
+        and bomboloni for West Hyderabad.
       </p>
-      <h2>Migration status</h2>
-      <p style={{ fontSize: 12.5, lineHeight: 1.5 }}>
-        Home and Orders are ported as Server Components. The rest of the screens are queued — see{" "}
-        <code>web/MIGRATION-STATUS.md</code>.
+      <h2>Today</h2>
+      <p style={{ fontSize: 12.5, lineHeight: 1.55 }}>
+        Switch modes from the pill in the home header — the bottom nav, quick actions and More
+        menu retune themselves around what you&rsquo;re doing.
       </p>
     </>
   );
 }
+
+const panelLink: React.CSSProperties = {
+  color: "var(--ink-soft)",
+  textDecoration: "none",
+};
