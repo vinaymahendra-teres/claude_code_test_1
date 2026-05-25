@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ModePill } from "@/components/ModePill";
 import { Icon } from "@/components/Icon";
 import { TweaksSheet } from "@/components/sheets/TweaksSheet";
+import { GlobalBranchBadge } from "@/components/GlobalBranchBadge";
 
 export function HomeHeader({
   dateLabel,
@@ -36,7 +37,10 @@ export function HomeHeader({
             marginBottom: 8,
           }}
         >
-          <ModePill />
+          <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+            <ModePill />
+            <GlobalBranchBadge />
+          </div>
           <button
             type="button"
             onClick={() => setTweaksOpen(true)}

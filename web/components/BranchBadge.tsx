@@ -26,10 +26,12 @@ export function BranchBadge({
   branches,
   initial,
   compact = false,
+  dropdownAlign = "left",
 }: {
   branches: BranchPick[];
   initial: string | null;
   compact?: boolean;
+  dropdownAlign?: "left" | "right";
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -134,7 +136,7 @@ export function BranchBadge({
             style={{
               position: "absolute",
               top: "calc(100% + 6px)",
-              right: 0,
+              ...(dropdownAlign === "right" ? { right: 0 } : { left: 0 }),
               minWidth: 220,
               maxWidth: "calc(100vw - 36px)",
               zIndex: 350,

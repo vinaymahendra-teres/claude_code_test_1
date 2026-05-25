@@ -28,20 +28,22 @@ export function PhoneShell({
           <span>9:41</span>
         </div>
         <div className="app-root">
-          {/* Global "active branch" badge — reads from AppShell context so
-              every screen (Server or Client) gets the same chrome without
-              its own data fetch. z-index 250 keeps it above the phone chrome
-              (notch / status-bar / home-indicator at 150-200) but below
-              sheets (300+). */}
+          {/* Global "active branch" badge — parked in the status-bar zone
+              (opposite the "9:41" clock) so it stays above page chrome
+              headers without overlapping their back/action buttons.
+              z-index 250 sits above phone chrome (notch / status-bar /
+              home-indicator at 150-200) and below sheets (300+).
+              Hides on "/" because HomeHeader renders an inline copy
+              next to the ModePill there. */}
           <div
             style={{
               position: "absolute",
-              top: 56,
-              right: 14,
+              top: 14,
+              right: 18,
               zIndex: 250,
             }}
           >
-            <GlobalBranchBadge />
+            <GlobalBranchBadge hideOnHome dropdownAlign="right" />
           </div>
           {children}
           <BottomNav />
