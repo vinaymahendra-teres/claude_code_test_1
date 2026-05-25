@@ -70,14 +70,18 @@ export default async function RecipesPage({
         <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {list.map((r) => (
-              <div
+              <Link
                 key={r.id}
+                href={`/recipes/${r.id}`}
                 style={{
                   background: "var(--surface)",
                   border: "1px solid var(--line-soft)",
                   borderRadius: "var(--r-lg)",
                   padding: 10,
                   boxShadow: "var(--shadow-sm)",
+                  textDecoration: "none",
+                  color: "inherit",
+                  display: "block",
                 }}
               >
                 <CakeArt
@@ -113,7 +117,7 @@ export default async function RecipesPage({
                     Eggless
                   </Pill>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
 
