@@ -4,6 +4,7 @@ import { fmtMoney, fmtCompactMoney, fmtDate } from "@/lib/format";
 import { PhoneShell } from "@/components/PhoneShell";
 import { HomeHeader } from "@/components/home/HomeHeader";
 import { QuickActions } from "@/components/home/QuickActions";
+import { auth } from "@/auth";
 
 // Anchor "today" to the seed-data baseline so the prototype's numbers stay readable.
 // When real time-aware queries land, swap to new Date().toISOString().slice(0, 10).
@@ -16,6 +17,9 @@ function plusDays(iso: string, n: number) {
 }
 
 export default async function HomePage() {
+  const session = await auth();
+  const userName = session?.user?.name ?? "";
+
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
@@ -69,7 +73,7 @@ export default async function HomePage() {
   return (
     <PhoneShell>
       <div data-screen-label="Home">
-        <HomeHeader dateLabel="Sunday, 24 May" greeting="Morning" />
+        <HomeHeader dateLabel="Sunday, 24 May" userName={userName} />
 
         <div style={{ padding: "6px 18px 100px", overflowY: "auto", flex: 1 }}>
           {isFirstRun ? (
