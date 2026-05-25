@@ -371,7 +371,9 @@ export function Sheet({
       style={{
         position: "absolute",
         inset: 0,
-        zIndex: 100,
+        // Above the phone chrome (notch/status-bar/home-indicator at 150-200)
+        // and the bottom nav (10).
+        zIndex: 300,
         background: "oklch(0.20 0.02 50 / 0.40)",
         display: "flex",
         alignItems: "flex-end",
