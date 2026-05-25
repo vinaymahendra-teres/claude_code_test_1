@@ -131,6 +131,12 @@ body {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   overflow: hidden;
+  /* Make app-root a flex container so [data-screen-label]'s `flex: 1`
+     actually expands to fill the phone interior, which in turn lets the
+     scrollable body section scroll within it. Without this, screens
+     overflow past the phone's `overflow: hidden` clip with no scroll bar. */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Animations + helpers */
