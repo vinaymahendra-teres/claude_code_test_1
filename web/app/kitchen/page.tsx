@@ -6,6 +6,8 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, Field, SectionHeader } from "@/components/ui";
 import { Button, IconButton, TextInput, Sheet } from "@/components/ui-client";
 import { Icon } from "@/components/Icon";
+import { EditTimerSheet } from "./EditTimerSheet";
+import { TemplatesSheet } from "./TemplatesSheet";
 
 const TIMERS_KEY = "tieredcake-timers";
 const SOUND_KEY = "tieredcake-timers-sound";
@@ -205,6 +207,37 @@ function useTimers() {
     setTimers((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  // Edit an existing timer's label / color / total duration. If the new
+  // duration is shorter than the time already elapsed the timer flips to
+  // "done"; otherwise we reset elapsedBeforePause to keep the math sane.
+  const updateTimer = useCallback(
+    (
+      id: string,
+      patch: { label?: string; color?: TimerColor; totalMs?: number },
+    ) => {
+      firedRef.current.delete(id);
+      setTimers((prev) =>
+        prev.map((t) => {
+          if (t.id !== id) return t;
+          const next = { ...t };
+          if (patch.label !== undefined) next.label = patch.label;
+          if (patch.color !== undefined) next.color = patch.color;
+          if (patch.totalMs !== undefined && patch.totalMs > 0) {
+            next.totalMs = patch.totalMs;
+            // Re-arm so the new duration is the remaining time, regardless of
+            // prior status.
+            next.startedAt = Date.now();
+            next.elapsedBeforePause = 0;
+            next.doneAt = null;
+            next.status = "running";
+          }
+          return next;
+        }),
+      );
+    },
+    [],
+  );
+
   const muteToggle = useCallback(() => setSoundOn((v) => !v), []);
 
   const now = Date.now();
@@ -225,6 +258,7 @@ function useTimers() {
     resume,
     addMs,
     dismiss,
+    updateTimer,
   };
 }
 
@@ -292,12 +326,14 @@ function TimerCard({
   onResume,
   onAdd,
   onDismiss,
+  onEdit,
 }: {
   t: DecoratedTimer;
   onPause: (id: string) => void;
   onResume: (id: string) => void;
   onAdd: (id: string, ms: number) => void;
   onDismiss: (id: string) => void;
+  onEdit: (t: DecoratedTimer) => void;
 }) {
   const progress = t.status === "done" ? 1 : 1 - t.remainingMs / t.totalMs;
   const c = TIMER_COLORS[t.color];
@@ -339,7 +375,10 @@ function TimerCard({
               : `${fmtTimerTime(t.totalMs)} total`}
         </div>
       </div>
-      <div style={{ display: "flex", gap: 6 }}>
+      <div style={{ display: "flex", gap: 4 }}>
+        <IconButton onClick={() => onEdit(t)} title="Edit">
+          <Icon.Edit size={16} />
+        </IconButton>
         {isDone ? (
           <>
             <IconButton onClick={() => onAdd(t.id, 60000)} title="+1 min">
@@ -514,6 +553,8 @@ function NewTimerForm({
 export default function KitchenPage() {
   const timers = useTimers();
   const [adding, setAdding] = useState(false);
+  const [editing, setEditing] = useState<DecoratedTimer | null>(null);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
 
   return (
     <PhoneShell>
@@ -528,9 +569,12 @@ export default function KitchenPage() {
                 Kitchen
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
-                {timers.running.length} running · {timers.done.length} done
+                {timers.running.length} running · {timers.done.length} done · IST
               </div>
             </div>
+            <IconButton onClick={() => setTemplatesOpen(true)} title="Templates">
+              <Icon.Sparkle size={19} />
+            </IconButton>
             <IconButton onClick={timers.muteToggle} title={timers.soundOn ? "Mute" : "Unmute"}>
               {timers.soundOn ? <Icon.Bell size={19} /> : <Icon.BellOff size={19} />}
             </IconButton>
@@ -593,6 +637,7 @@ export default function KitchenPage() {
                         onResume={timers.resume}
                         onAdd={timers.addMs}
                         onDismiss={timers.dismiss}
+                        onEdit={setEditing}
                       />
                     ))}
                   </div>
@@ -614,6 +659,7 @@ export default function KitchenPage() {
                           onResume={timers.resume}
                           onAdd={timers.addMs}
                           onDismiss={timers.dismiss}
+                        onEdit={setEditing}
                         />
                       ))}
                   </div>
@@ -632,6 +678,7 @@ export default function KitchenPage() {
                         onResume={timers.resume}
                         onAdd={timers.addMs}
                         onDismiss={timers.dismiss}
+                        onEdit={setEditing}
                       />
                     ))}
                   </div>
@@ -644,6 +691,22 @@ export default function KitchenPage() {
         <Sheet open={adding} onClose={() => setAdding(false)} title="New timer">
           <NewTimerForm onStart={timers.start} onClose={() => setAdding(false)} />
         </Sheet>
+
+        <EditTimerSheet
+          open={editing != null}
+          initial={editing}
+          onClose={() => setEditing(null)}
+          onSave={(patch) => {
+            if (!editing) return;
+            timers.updateTimer(editing.id, patch);
+          }}
+        />
+
+        <TemplatesSheet
+          open={templatesOpen}
+          onClose={() => setTemplatesOpen(false)}
+          onStart={timers.start}
+        />
       </div>
     </PhoneShell>
   );

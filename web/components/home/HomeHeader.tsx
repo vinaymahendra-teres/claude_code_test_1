@@ -13,11 +13,11 @@ export function HomeHeader({
   userName: string;
 }) {
   const [tweaksOpen, setTweaksOpen] = useState(false);
-  // Computed client-side so the greeting reflects the operator's actual clock
-  // (Asia/Kolkata) rather than the server's UTC time.
+  // Greeting is anchored to Asia/Kolkata regardless of the device's clock,
+  // so Sh and S see "Good morning" at IST 5am even if their phone is on UTC.
   const [hour, setHour] = useState<number | null>(null);
   useEffect(() => {
-    setHour(new Date().getHours());
+    setHour(istHour());
   }, []);
 
   const firstName = (userName || "").split(/\s+/)[0] || "there";
@@ -88,4 +88,15 @@ function timeOfDay(h: number): "morning" | "afternoon" | "evening" | "night" {
   if (h >= 12 && h < 17) return "afternoon";
   if (h >= 17 && h < 21) return "evening";
   return "night";
+}
+
+// Reads the hour in Asia/Kolkata, ignoring whatever timezone the device is on.
+function istHour(): number {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date());
+  const hourPart = parts.find((p) => p.type === "hour");
+  return hourPart ? parseInt(hourPart.value, 10) : new Date().getHours();
 }

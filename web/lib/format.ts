@@ -1,6 +1,36 @@
 /**
  * Shared formatters — ported from app/src/data.jsx (window.fmtMoney etc.)
+ *
+ * Operators are in Hyderabad and read everything in IST. Any time/date format
+ * here that takes a Date or ISO string runs through Asia/Kolkata explicitly so
+ * a server in UTC and a phone in any other zone all render the same string.
  */
+
+export const IST = "Asia/Kolkata";
+
+export const fmtIstTime = (d: Date | string | null | undefined) => {
+  if (d == null) return "—";
+  const date = typeof d === "string" ? new Date(d) : d;
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: IST,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+};
+
+export const fmtIstDateTime = (d: Date | string | null | undefined) => {
+  if (d == null) return "—";
+  const date = typeof d === "string" ? new Date(d) : d;
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: IST,
+    day: "2-digit",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+};
 
 export const fmtMoney = (n: number | null | undefined, decimals = 0) => {
   if (n == null || Number.isNaN(n)) return "—";
