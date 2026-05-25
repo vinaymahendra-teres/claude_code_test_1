@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 import { auth, hasRole } from "@/auth";
+import { listActiveBranches } from "@/lib/branches";
+import { getActiveBranchId } from "@/lib/branch-context";
 
 export const metadata: Metadata = {
   title: "Tiered Cake Company — Run the bakery",
@@ -14,8 +16,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
+  const [session, branches, activeBranchId] = await Promise.all([
+    auth(),
+    listActiveBranches(),
+    getActiveBranchId(),
+  ]);
   const isAdmin = hasRole(session?.user?.role, "admin");
+  const appBranches = branches.map((b) => ({
+    id: b.id,
+    label: b.label,
+    community: b.community,
+    neighbourhood: b.neighbourhood,
+  }));
 
   return (
     <html lang="en">
@@ -28,7 +40,9 @@ export default async function RootLayout({
         />
       </head>
       <body>
-        <AppShell isAdmin={isAdmin}>{children}</AppShell>
+        <AppShell isAdmin={isAdmin} branches={appBranches} activeBranchId={activeBranchId}>
+          {children}
+        </AppShell>
       </body>
     </html>
   );

@@ -7,6 +7,7 @@ import type { HomeData } from "@/components/home/sections";
 import { auth } from "@/auth";
 import Link from "next/link";
 import { todayIst, plusDaysIst, fmtIstDayLabel } from "@/lib/format";
+import { getActiveBranchId } from "@/lib/branch-context";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,13 @@ export default async function HomePage() {
   const month = TODAY.slice(0, 7);
 
   // Fetch every dataset any section might need in one parallel volley.
+  const activeBranch = await getActiveBranchId();
+  const branchSql = activeBranch ? activeBranch : null;
+  const scopeOrders = <T,>(q: T): T => (branchSql ? (q as { eq: (a: string, b: string) => T }).eq("branch_id", branchSql) : q);
+  const scopeCustomers = <T,>(q: T): T => (branchSql ? (q as { eq: (a: string, b: string) => T }).eq("branch_id", branchSql) : q);
+  const scopeInventory = <T,>(q: T): T => (branchSql ? (q as { eq: (a: string, b: string) => T }).eq("branch_id", branchSql) : q);
+  const scopeLists = <T,>(q: T): T => (branchSql ? (q as { eq: (a: string, b: string) => T }).eq("branch_id", branchSql) : q);
+
   const [
     { data: activeOrders },
     { data: todayOrderRows },
@@ -42,42 +50,54 @@ export default async function HomePage() {
     { data: blockedRows },
     { data: monthlyRow },
   ] = await Promise.all([
-    supabase
-      .from("orders")
-      .select("id, title, flavor, price, balance, delivery_date, delivery_slot, status, customer_id, customers (name)")
-      .not("status", "in", "(delivered,draft,cancelled)"),
-    supabase
-      .from("orders")
-      .select("id, title, flavor, delivery_slot, delivery_date, price, status, customers (name)")
-      .eq("delivery_date", TODAY)
-      .order("delivery_slot"),
-    supabase
-      .from("orders")
-      .select("id, title, flavor, delivery_slot, delivery_date, price, status, customers (name)")
-      .eq("delivery_date", tomorrow)
-      .order("delivery_slot"),
-    supabase.from("inventory_items").select("id, name, qty, unit, reorder_at"),
-    supabase
-      .from("shopping_lists")
-      .select("id, name, created_at")
-      .eq("status", "open")
-      .order("created_at", { ascending: false }),
+    scopeOrders(
+      supabase
+        .from("orders")
+        .select("id, title, flavor, price, balance, delivery_date, delivery_slot, status, customer_id, branch_id, customers (name)")
+        .not("status", "in", "(delivered,draft,cancelled)"),
+    ),
+    scopeOrders(
+      supabase
+        .from("orders")
+        .select("id, title, flavor, delivery_slot, delivery_date, price, status, branch_id, customers (name)")
+        .eq("delivery_date", TODAY)
+        .order("delivery_slot"),
+    ),
+    scopeOrders(
+      supabase
+        .from("orders")
+        .select("id, title, flavor, delivery_slot, delivery_date, price, status, branch_id, customers (name)")
+        .eq("delivery_date", tomorrow)
+        .order("delivery_slot"),
+    ),
+    scopeInventory(supabase.from("inventory_items").select("id, name, qty, unit, reorder_at, branch_id")),
+    scopeLists(
+      supabase
+        .from("shopping_lists")
+        .select("id, name, created_at, branch_id")
+        .eq("status", "open")
+        .order("created_at", { ascending: false }),
+    ),
     supabase.from("shopping_list_items").select("list_id, checked, estimated_cost"),
     supabase.from("campaigns").select("data").limit(20),
-    supabase
-      .from("customers")
-      .select("id, name, area, since, order_count")
-      .gte("since", ninetyDaysAgo)
-      .order("since", { ascending: false })
-      .limit(20),
-    supabase
-      .from("orders")
-      .select("id, title, delivery_date, feedback_received, rating, customers (name)")
-      .eq("status", "delivered")
-      .lte("delivery_date", twoDaysAgo)
-      .eq("feedback_received", "N")
-      .order("delivery_date", { ascending: false })
-      .limit(8),
+    scopeCustomers(
+      supabase
+        .from("customers")
+        .select("id, name, area, since, order_count, branch_id")
+        .gte("since", ninetyDaysAgo)
+        .order("since", { ascending: false })
+        .limit(20),
+    ),
+    scopeOrders(
+      supabase
+        .from("orders")
+        .select("id, title, delivery_date, feedback_received, rating, branch_id, customers (name)")
+        .eq("status", "delivered")
+        .lte("delivery_date", twoDaysAgo)
+        .eq("feedback_received", "N")
+        .order("delivery_date", { ascending: false })
+        .limit(8),
+    ),
     supabase
       .from("compliance_items")
       .select("id, item, due_date, status")

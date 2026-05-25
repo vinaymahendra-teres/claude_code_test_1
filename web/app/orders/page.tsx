@@ -5,6 +5,7 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, CakeArt, StatusPill, SectionHeader, Pill } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate, fmtRelative } from "@/lib/format";
+import { getActiveBranchId } from "@/lib/branch-context";
 
 export const revalidate = 60;
 
@@ -40,13 +41,16 @@ export default async function OrdersPage({
 
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
+  const activeBranch = await getActiveBranchId();
 
-  const { data: orders } = await supabase
+  let query = supabase
     .from("orders")
     .select(
-      "id, customer_id, title, flavor, price, delivery_date, delivery_slot, delivery_area, status, customers (name, avatar_tone)",
+      "id, customer_id, title, flavor, price, delivery_date, delivery_slot, delivery_area, status, branch_id, customers (name, avatar_tone)",
     )
     .order("delivery_date", { ascending: true });
+  if (activeBranch) query = query.eq("branch_id", activeBranch);
+  const { data: orders } = await query;
 
   const filter = TAB_FILTERS[tab];
   const filtered = (orders ?? []).filter((o) => filter(o.status));

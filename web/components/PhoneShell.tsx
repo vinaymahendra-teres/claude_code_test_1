@@ -5,6 +5,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
+import { GlobalBranchBadge } from "./GlobalBranchBadge";
 
 export function PhoneShell({
   children,
@@ -27,6 +28,19 @@ export function PhoneShell({
           <span>9:41</span>
         </div>
         <div className="app-root">
+          {/* Global "active branch" badge — reads from AppShell context so
+              every screen (Server or Client) gets the same chrome without
+              its own data fetch. */}
+          <div
+            style={{
+              position: "absolute",
+              top: 16,
+              right: 14,
+              zIndex: 7,
+            }}
+          >
+            <GlobalBranchBadge />
+          </div>
           {children}
           <BottomNav />
         </div>

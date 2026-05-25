@@ -6,6 +6,7 @@ import { Card, Pill, SectionHeader } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtRelative } from "@/lib/format";
 import { NewListButton } from "./NewListButton";
+import { getActiveBranchId } from "@/lib/branch-context";
 
 export const revalidate = 30;
 
@@ -36,13 +37,17 @@ export default async function ShoppingPage({
 
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
+  const activeBranch = await getActiveBranchId();
+
+  let listsQ = supabase
+    .from("shopping_lists")
+    .select("id, name, status, created_at, completed_at, branch_id")
+    .eq("status", tab)
+    .order("created_at", { ascending: false });
+  if (activeBranch) listsQ = listsQ.eq("branch_id", activeBranch);
 
   const [{ data: lists }, { data: items }] = await Promise.all([
-    supabase
-      .from("shopping_lists")
-      .select("id, name, status, created_at, completed_at")
-      .eq("status", tab)
-      .order("created_at", { ascending: false }),
+    listsQ,
     supabase
       .from("shopping_list_items")
       .select("list_id, checked, estimated_cost"),

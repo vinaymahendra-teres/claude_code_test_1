@@ -136,6 +136,13 @@ const TWEAKS_KEY = "tieredcake-tweaks";
 
 // ---------- Context ----------
 
+export type AppBranch = {
+  id: string;
+  label: string;
+  community: string | null;
+  neighbourhood: string | null;
+};
+
 type AppShellState = {
   mode: ModeId;
   modeDef: ModeDef;
@@ -143,6 +150,8 @@ type AppShellState = {
   tweaks: Tweaks;
   setTweak: <K extends keyof Tweaks>(key: K, value: Tweaks[K]) => void;
   isAdmin: boolean;
+  branches: AppBranch[];
+  activeBranchId: string | null;
 };
 
 const AppShellContext = createContext<AppShellState | null>(null);
@@ -159,6 +168,8 @@ export function useAppShell(): AppShellState {
       tweaks: DEFAULT_TWEAKS,
       setTweak: () => {},
       isAdmin: false,
+      branches: [],
+      activeBranchId: null,
     };
   }
   return ctx;
@@ -211,9 +222,13 @@ function applyTweaks(t: Tweaks) {
 export function AppShell({
   children,
   isAdmin = false,
+  branches = [],
+  activeBranchId = null,
 }: {
   children: ReactNode;
   isAdmin?: boolean;
+  branches?: AppBranch[];
+  activeBranchId?: string | null;
 }) {
   const [mode, setModeState] = useState<ModeId>(DEFAULT_MODE);
   const [tweaks, setTweaksState] = useState<Tweaks>(DEFAULT_TWEAKS);
@@ -269,7 +284,16 @@ export function AppShell({
 
   return (
     <AppShellContext.Provider
-      value={{ mode, modeDef: MODES[mode], setMode, tweaks, setTweak, isAdmin }}
+      value={{
+        mode,
+        modeDef: MODES[mode],
+        setMode,
+        tweaks,
+        setTweak,
+        isAdmin,
+        branches,
+        activeBranchId,
+      }}
     >
       {children}
     </AppShellContext.Provider>

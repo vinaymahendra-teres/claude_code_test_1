@@ -28,6 +28,7 @@ const ALL_ROUTES: Array<{
   { slug: "books", href: "/books", label: "Books", icon: "Wallet", desc: "P&L, expenses, tax" },
   { slug: "reports", href: "/reports", label: "Reports", icon: "Doc", desc: "Financial reports" },
   { slug: "tools", href: "/tools", label: "Tools", icon: "Sparkle", desc: "Conversions" },
+  { slug: "invoices", href: "/invoices", label: "Invoices", icon: "Doc", desc: "Per-branch billing + receipts" },
 ];
 
 const ADMIN_ROUTES: Array<{

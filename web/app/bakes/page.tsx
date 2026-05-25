@@ -5,6 +5,7 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, StatTile, StatusPill } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtCompactMoney, fmtDate, todayIst } from "@/lib/format";
+import { getActiveBranchId } from "@/lib/branch-context";
 
 export const revalidate = 60;
 
@@ -35,13 +36,18 @@ export default async function BakesPage() {
   });
   const weekEnd = days[days.length - 1];
 
+  const activeBranch = await getActiveBranchId();
+
+  let ordersQ = supabase
+    .from("orders")
+    .select("id, customer_id, title, flavor, size, price, delivery_date, delivery_slot, status, branch_id")
+    .gte("delivery_date", today)
+    .lte("delivery_date", weekEnd)
+    .not("status", "in", "(delivered,draft)");
+  if (activeBranch) ordersQ = ordersQ.eq("branch_id", activeBranch);
+
   const [{ data: orders }, { data: recipes }] = await Promise.all([
-    supabase
-      .from("orders")
-      .select("id, customer_id, title, flavor, size, price, delivery_date, delivery_slot, status")
-      .gte("delivery_date", today)
-      .lte("delivery_date", weekEnd)
-      .not("status", "in", "(delivered,draft)"),
+    ordersQ,
     supabase.from("recipes").select("name, prep_mins, bake_mins"),
   ]);
 

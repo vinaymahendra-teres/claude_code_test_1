@@ -6,6 +6,7 @@ import { Card, Avatar } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { markReceived } from "./actions";
 import { todayIst } from "@/lib/format";
+import { getActiveBranchId } from "@/lib/branch-context";
 
 export const revalidate = 60;
 
@@ -13,14 +14,17 @@ export default async function ReviewsPage() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
   const TODAY = todayIst();
+  const activeBranch = await getActiveBranchId();
 
-  const { data: orders } = await supabase
+  let q = supabase
     .from("orders")
     .select(
-      "id, customer_id, title, delivery_date, feedback_received, customers (name, avatar_tone)",
+      "id, customer_id, title, delivery_date, feedback_received, branch_id, customers (name, avatar_tone)",
     )
     .eq("status", "delivered")
     .neq("feedback_received", "Y");
+  if (activeBranch) q = q.eq("branch_id", activeBranch);
+  const { data: orders } = await q;
 
   const today = new Date(TODAY);
   const queue = (orders ?? [])

@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { fmtCompactMoney } from "@/lib/format";
 import { InventoryItemSheet } from "./InventoryItemSheet";
 import { AddInventoryButton } from "./AddInventoryButton";
+import { getActiveBranchId } from "@/lib/branch-context";
 
 export const revalidate = 60;
 
@@ -39,12 +40,15 @@ export default async function InventoryPage({
 
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
+  const activeBranch = await getActiveBranchId();
 
-  const { data } = await supabase
+  let q = supabase
     .from("inventory_items")
-    .select("id, name, category, qty, unit, reorder_at, unit_cost, supplier, reorder_qty, days_cover_at_typical_use")
+    .select("id, name, category, qty, unit, reorder_at, unit_cost, supplier, reorder_qty, days_cover_at_typical_use, branch_id")
     .order("category", { ascending: true })
     .order("name", { ascending: true });
+  if (activeBranch) q = q.eq("branch_id", activeBranch);
+  const { data } = await q;
 
   const all = (data as Item[]) ?? [];
   const lowItems = all.filter((i) => Number(i.qty) < Number(i.reorder_at));
