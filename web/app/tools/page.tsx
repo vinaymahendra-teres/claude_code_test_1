@@ -63,7 +63,9 @@ export default function ToolsPage() {
         {/* Tool selector chips */}
         <div
           style={{
-            position: "relative",
+            // Outer 18px padding matches the rest of the page chrome so the
+            // chip strip aligns with the converter dropdown / cards below.
+            padding: "6px 18px 10px",
             borderBottom: "1px solid var(--line-soft)",
           }}
         >
@@ -73,20 +75,19 @@ export default function ToolsPage() {
               display: "flex",
               gap: 6,
               overflowX: "auto",
-              padding: "6px 18px 10px",
               // Hide both Firefox and WebKit scrollbars while keeping the
-              // overflow scrollable; the fade-mask hints at more content.
+              // overflow scrollable; the fade hints at more content.
               scrollbarWidth: "none",
-              // Smooth fade-out at the right edge so the cut chip reads as
-              // "scroll for more" instead of broken layout.
+              // Soft fade on the right edge only — left edge sits flush with
+              // other controls when fully scrolled left, which is the common
+              // case. The fade taper is inside the 18px-padded area so it
+              // never crosses the alignment line of the cards below.
               maskImage:
-                "linear-gradient(to right, transparent 0, black 16px, black calc(100% - 24px), transparent 100%)",
+                "linear-gradient(to right, black calc(100% - 18px), transparent 100%)",
               WebkitMaskImage:
-                "linear-gradient(to right, transparent 0, black 16px, black calc(100% - 24px), transparent 100%)",
-              // Snap chips to the start so taps land cleanly after scrolling.
+                "linear-gradient(to right, black calc(100% - 18px), transparent 100%)",
+              // Snap chips so taps land cleanly after a flick.
               scrollSnapType: "x proximity",
-              scrollPaddingLeft: 18,
-              scrollPaddingRight: 24,
             }}
           >
             {TOOLS.map((t) => {
