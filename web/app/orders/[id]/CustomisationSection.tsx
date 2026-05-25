@@ -133,11 +133,11 @@ export function CustomisationSection({
                   fontSize: 13,
                 }}
               >
-                <span style={{ color: "var(--ink-soft)" }}>Recipe base cost</span>
+                <span style={{ color: "var(--ink-soft)" }}>Recipe ingredient cost</span>
                 <span>{fmtMoney(recipeCost)}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-                <span style={{ color: "var(--ink-soft)" }}>Customisation addons</span>
+                <span style={{ color: "var(--ink-soft)" }}>Addons cost</span>
                 <span>{fmtMoney(totalCustomisationCost)}</span>
               </div>
               <div
@@ -149,8 +149,11 @@ export function CustomisationSection({
                   marginTop: 4,
                 }}
               >
-                <span>Customised cost subtotal</span>
+                <span>Total bake cost</span>
                 <span>{fmtMoney(recipeCost + totalCustomisationCost)}</span>
+              </div>
+              <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 4, lineHeight: 1.4 }}>
+                Cost basis — separate from the all-in quoted price billed to the customer.
               </div>
             </>
           )}

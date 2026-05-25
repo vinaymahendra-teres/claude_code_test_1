@@ -25,7 +25,9 @@ const COLOR_SWATCHES = [
   "#d4af37",
 ];
 
-const DIETARY_OPTIONS = ["eggless", "gluten-free", "sugar-free", "nut-free", "vegan"];
+// "eggless" lives on its own Step 2 toggle (and on every recipe row), so
+// keep it out of these chips to avoid the operator setting it in two places.
+const DIETARY_OPTIONS = ["gluten-free", "sugar-free", "nut-free", "vegan"];
 
 export function BriefForm({
   schema,

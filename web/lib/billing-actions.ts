@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { requireAuth, requireRole } from "@/lib/auth-helpers";
 import { todayIst } from "@/lib/format";
-import type { Customisation, CustomisationAddon } from "@/lib/customisation";
+import { addonsTotal, type Customisation, type CustomisationAddon } from "@/lib/customisation";
 
 // ---------- Shared types ----------
 
@@ -55,21 +55,28 @@ export async function createInvoiceForOrder(orderId: string): Promise<string> {
   ]);
   if (!branch) throw new Error("Branch not found");
 
-  // Build line items: recipe base + customisation addons
+  // Build line items so the subtotal exactly equals the quoted order.price.
+  // The operator quotes a single all-in price; addons are itemised for the
+  // customer's benefit and the cake line absorbs the residual. Otherwise
+  // counting the cake at order.price AND the addons separately would
+  // double-charge any addon the operator already folded into the quote.
   const lineItems: InvoiceLineItem[] = [];
+  const cust = (order.customisation as Customisation | null) ?? {};
+  const addons: CustomisationAddon[] = (cust.addons ?? []).filter((a) => (a.price ?? 0) > 0);
+  const addonsCost = addonsTotal(addons);
+  const quoted = order.price ?? 0;
+  const cakePortion = Math.max(0, quoted - addonsCost);
+
   lineItems.push({
     description: [order.product_line, order.title, order.flavor, order.size]
       .filter(Boolean)
       .join(" · "),
     qty: 1,
-    unit_price: order.price ?? 0,
-    total: order.price ?? 0,
+    unit_price: cakePortion,
+    total: cakePortion,
   });
 
-  const cust = (order.customisation as Customisation | null) ?? {};
-  const addons: CustomisationAddon[] = cust.addons ?? [];
   for (const a of addons) {
-    if (!a.price || a.price <= 0) continue;
     lineItems.push({
       description: `${a.name}${a.qty !== 1 ? ` × ${a.qty}` : ""}`,
       qty: a.qty ?? 1,

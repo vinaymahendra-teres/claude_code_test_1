@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { PhoneShell } from "@/components/PhoneShell";
 import { Card, CakeArt, Avatar, Pill, Field } from "@/components/ui";
 import { Button, TextInput, Toggle, ListRow } from "@/components/ui-client";
@@ -56,6 +56,12 @@ const STEPS = ["Customer", "Product", "Look", "Delivery", "Pricing", "Review"] a
 
 const SLOTS = ["9 AM", "11 AM", "1 PM", "3 PM", "5 PM", "7 PM", "8 PM", "Anytime"];
 
+// Auto-saved draft for the New Order wizard. Restores form + current step
+// on mount so a tab restart or accidental back-nav keeps the in-progress
+// quote. Cleared after a successful submit. Versioned so a schema change
+// to FormState ignores stale shapes instead of crashing.
+const DRAFT_KEY = "tieredcake-new-order-draft-v1";
+
 export function NewOrderForm({
   customers,
   recipes,
@@ -92,6 +98,54 @@ export function NewOrderForm({
     deposit: "",
     notes: "",
   });
+  // Hydration guard — once the saved draft (if any) is read, future renders
+  // are allowed to write back. Stops the initial render's blank form from
+  // clobbering whatever was saved.
+  const [hydrated, setHydrated] = useState(false);
+  const [restoredDraft, setRestoredDraft] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { form?: FormState; step?: number };
+        if (parsed && parsed.form && typeof parsed.form === "object") {
+          setForm((f) => ({ ...f, ...parsed.form }));
+          if (typeof parsed.step === "number" && parsed.step >= 0 && parsed.step < STEPS.length) {
+            setStep(parsed.step);
+          }
+          setRestoredDraft(true);
+        }
+      }
+    } catch {
+      /* ignore corrupt draft */
+    }
+    setHydrated(true);
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, step }));
+      } catch {
+        /* storage full / private mode — ignore */
+      }
+    }, 200);
+  }, [form, step, hydrated]);
+
+  function clearDraft() {
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
 
   function set<K extends keyof FormState>(k: K, v: FormState[K]) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -147,6 +201,10 @@ export function NewOrderForm({
 
   function submit() {
     setSubmitError(null);
+    // Pre-clear the draft so a server redirect (which throws NEXT_REDIRECT
+    // in dev) doesn't leave a stale draft behind. If submit throws, we
+    // re-save below so the form isn't lost.
+    clearDraft();
     startTransition(async () => {
       try {
         await createOrder({
@@ -179,8 +237,41 @@ export function NewOrderForm({
         });
       } catch (err) {
         setSubmitError(err instanceof Error ? err.message : String(err));
+        // Re-stash the draft so an error mid-submit doesn't lose work.
+        try {
+          localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, step }));
+        } catch {
+          /* ignore */
+        }
       }
     });
+  }
+
+  function discardDraft() {
+    clearDraft();
+    setRestoredDraft(false);
+    setForm({
+      customerId: null,
+      newCustomerName: "",
+      newCustomerPhone: "",
+      newCustomerInsta: "",
+      productLine: defaultLineName,
+      title: "",
+      flavor: "",
+      size: "",
+      servings: 0,
+      eggless: false,
+      brief: {},
+      selectedAddons: [],
+      deliveryDate: "",
+      deliverySlot: "",
+      deliveryArea: "",
+      coldChainNotes: "",
+      price: "",
+      deposit: "",
+      notes: "",
+    });
+    setStep(0);
   }
 
   return (
@@ -237,6 +328,41 @@ export function NewOrderForm({
         </div>
 
         <div style={{ padding: "16px 18px 120px", overflowY: "auto", flex: 1, minHeight: 0 }}>
+          {restoredDraft && (
+            <div
+              style={{
+                marginBottom: 12,
+                padding: "8px 12px",
+                background: "var(--sage-soft)",
+                border: "1px solid var(--sage)",
+                borderRadius: "var(--r)",
+                fontSize: 12,
+                color: "var(--ink-soft)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <span>Draft restored from your last session.</span>
+              <button
+                type="button"
+                onClick={discardDraft}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--caramel-deep)",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  textDecoration: "underline",
+                }}
+              >
+                Start fresh
+              </button>
+            </div>
+          )}
           {step === 0 && (
             <StepCustomer customers={customers} form={form} set={set} errors={errors} />
           )}
@@ -267,7 +393,15 @@ export function NewOrderForm({
               blockedByDate={blockedByDate}
             />
           )}
-          {step === 4 && <StepPricing recipes={recipes} form={form} set={set} errors={errors} />}
+          {step === 4 && (
+            <StepPricing
+              productLines={productLines}
+              recipes={recipes}
+              form={form}
+              set={set}
+              errors={errors}
+            />
+          )}
           {step === 5 && <StepReview customers={customers} form={form} />}
 
           {submitError && (
@@ -803,7 +937,7 @@ function StepTheme({
             <span>{fmtMoney(addonsTotal(form.selectedAddons))}</span>
           </div>
           <div style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 4 }}>
-            Add this to the recipe base when quoting on the next step.
+            The Pricing step will fold this into the suggested all-in quote.
           </div>
         </Card>
       )}
@@ -1037,11 +1171,13 @@ function StepDelivery({
 // ---------- Step 5: Pricing ----------
 
 function StepPricing({
+  productLines,
   recipes,
   form,
   set,
   errors,
 }: {
+  productLines: ProductLine[];
   recipes: Recipe[];
   form: FormState;
   set: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
@@ -1051,8 +1187,21 @@ function StepPricing({
   const deposit = +form.deposit || 0;
   const recipe = recipes.find((r) => r.name === form.flavor);
   const ingCost = recipe?.costPerCake || 0;
-  const margin = price - ingCost;
+  const addonsCost = addonsTotal(form.selectedAddons);
+  const totalCost = ingCost + addonsCost;
+  const margin = price - totalCost;
   const marginPct = price > 0 ? Math.round((margin / price) * 100) : 0;
+
+  // Suggested all-in price = size's price hint (the base MSRP) + addons.
+  // Tap "Use suggested" to fill or align form.price so the operator never
+  // has to do the addition by hand — which is where double-counting and
+  // forgotten addons creep in.
+  const activeLine = productLines.find((p) => p.name === form.productLine);
+  const sizeRow = activeLine?.sizes.find((s) => s.name === form.size);
+  const baseHint = sizeRow?.price_hint ?? 0;
+  const suggested = baseHint + addonsCost;
+  const showSuggestion =
+    suggested > 0 && suggested !== price && (baseHint > 0 || addonsCost > 0);
 
   return (
     <div>
@@ -1067,6 +1216,47 @@ function StepPricing({
           prefix="₹"
           error={!!errors.price}
         />
+        {showSuggestion && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+              marginTop: 8,
+              padding: "8px 10px",
+              background: "var(--sage-soft)",
+              border: "1px solid var(--sage)",
+              borderRadius: "var(--r)",
+              fontSize: 12,
+              color: "var(--ink-soft)",
+            }}
+          >
+            <span>
+              Suggested {fmtMoney(suggested)} ={" "}
+              {fmtMoney(baseHint)} base
+              {addonsCost > 0 ? ` + ${fmtMoney(addonsCost)} addons` : ""}
+            </span>
+            <button
+              type="button"
+              onClick={() => set("price", String(suggested))}
+              style={{
+                background: "var(--caramel)",
+                color: "var(--surface)",
+                border: "none",
+                padding: "5px 10px",
+                fontSize: 11.5,
+                fontWeight: 600,
+                borderRadius: 999,
+                cursor: "pointer",
+                fontFamily: "inherit",
+                flexShrink: 0,
+              }}
+            >
+              Use
+            </button>
+          </div>
+        )}
       </Field>
 
       <Field
@@ -1112,6 +1302,8 @@ function StepPricing({
           Cost breakdown
         </div>
         <Row label="Ingredients cost" value={fmtMoney(ingCost)} />
+        {addonsCost > 0 && <Row label="Addons cost" value={fmtMoney(addonsCost)} />}
+        {addonsCost > 0 && <Row label="Total cost" value={fmtMoney(totalCost)} />}
         <Row label="Quoted price" value={fmtMoney(price)} />
         <div style={{ borderTop: "1px dashed var(--line)", margin: "10px 0" }} />
         <Row

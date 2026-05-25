@@ -108,6 +108,10 @@ export type BriefField =
   | "dietary"
   | "notes";
 
+// Dietary chips only surface on cake — other lines either carry the eggless
+// toggle from Step 2 (cake/cupcake) or have no realistic dietary variants
+// (brownie, tub, bomboloni). Adding it everywhere created a duplicate of
+// the dedicated Eggless toggle.
 export const BRIEF_SCHEMAS: Record<string, BriefField[]> = {
   cake: [
     "occasion",
@@ -129,12 +133,11 @@ export const BRIEF_SCHEMAS: Record<string, BriefField[]> = {
     "liner_colour",
     "topper",
     "message",
-    "dietary",
     "notes",
   ],
-  brownie: ["occasion", "message", "wrapping", "dietary", "notes"],
-  tub: ["flavor_mix", "layer_notes", "dietary", "notes"],
-  bomboloni: ["filling_mix", "glaze", "dietary", "notes"],
+  brownie: ["occasion", "message", "wrapping", "notes"],
+  tub: ["flavor_mix", "layer_notes", "notes"],
+  bomboloni: ["filling_mix", "glaze", "notes"],
 };
 
 export function briefSchemaFor(productLine: string | null | undefined): BriefField[] {
