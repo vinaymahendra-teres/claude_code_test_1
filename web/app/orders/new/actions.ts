@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { todayIst } from "@/lib/format";
 
 export type CreateOrderInput = {
   customerId: string | null;
@@ -48,7 +49,7 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
       name: input.newCustomer.name,
       phone: input.newCustomer.phone || null,
       instagram: input.newCustomer.instagram || null,
-      since: "2026-05-24",
+      since: todayIst(),
       order_count: 0,
       lifetime_value: 0,
       avatar_tone: "caramel",

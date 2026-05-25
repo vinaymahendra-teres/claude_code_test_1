@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "tsx scripts/seed.ts",
-    "seed:admins": "tsx scripts/seed-admins.ts"
+    "seed:admins": "tsx scripts/seed-admins.ts",
+    "seed:calendar": "tsx scripts/seed-calendar.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",

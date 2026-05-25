@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { requireAuth, requireRole } from "@/lib/auth-helpers";
+import { todayIst } from "@/lib/format";
 
 export type InventoryEdit = {
   name: string;
@@ -80,7 +81,7 @@ export async function restockItem(id: string, delta: number) {
   const newQty = Number(cur.qty) + delta;
   const { error } = await supabase
     .from("inventory_items")
-    .update({ qty: newQty, last_restock: "2026-05-24", updated_at: new Date().toISOString() })
+    .update({ qty: newQty, last_restock: todayIst(), updated_at: new Date().toISOString() })
     .eq("id", id);
   if (error) throw new Error(`Failed to restock: ${error.message}`);
   revalidatePath("/inventory");

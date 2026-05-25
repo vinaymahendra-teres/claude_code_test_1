@@ -4,11 +4,10 @@ import { createClient } from "@/utils/supabase/server";
 import { PhoneShell } from "@/components/PhoneShell";
 import { Card, StatTile, StatusPill } from "@/components/ui";
 import { Icon } from "@/components/Icon";
-import { fmtMoney, fmtCompactMoney, fmtDate } from "@/lib/format";
+import { fmtMoney, fmtCompactMoney, fmtDate, todayIst } from "@/lib/format";
 
 export const revalidate = 60;
 
-const TODAY = "2026-05-24";
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 type Order = {
@@ -26,8 +25,9 @@ type Order = {
 export default async function BakesPage() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
+  const today = todayIst();
 
-  const start = new Date(TODAY);
+  const start = new Date(today);
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(start);
     d.setDate(d.getDate() + i);
@@ -39,7 +39,7 @@ export default async function BakesPage() {
     supabase
       .from("orders")
       .select("id, customer_id, title, flavor, size, price, delivery_date, delivery_slot, status")
-      .gte("delivery_date", TODAY)
+      .gte("delivery_date", today)
       .lte("delivery_date", weekEnd)
       .not("status", "in", "(delivered,draft)"),
     supabase.from("recipes").select("name, prep_mins, bake_mins"),
@@ -94,7 +94,7 @@ export default async function BakesPage() {
           </div>
 
           {byDay.map(({ date, orders }) => {
-            const isToday = date === TODAY;
+            const isToday = date === today;
             const heat =
               orders.length === 0
                 ? "rest"

@@ -5,19 +5,15 @@ import { HomeHeader } from "@/components/home/HomeHeader";
 import { HomeDashboard } from "@/components/home/HomeDashboard";
 import type { HomeData } from "@/components/home/sections";
 import { auth } from "@/auth";
-
-// Anchored to the seed-data baseline so the prototype's numbers stay readable.
-const TODAY = "2026-05-24";
-
-function plusDays(iso: string, n: number) {
-  const d = new Date(iso);
-  d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
-}
+import Link from "next/link";
+import { todayIst, plusDaysIst, fmtIstDayLabel } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
+  const TODAY = todayIst();
+  const plusDays = plusDaysIst;
+
   const session = await auth();
   const userName = session?.user?.name ?? "";
 
@@ -256,7 +252,7 @@ export default async function HomePage() {
   return (
     <PhoneShell>
       <div data-screen-label="Home">
-        <HomeHeader dateLabel="Sunday, 24 May" userName={userName} />
+        <HomeHeader dateLabel={fmtIstDayLabel()} userName={userName} />
         <HomeDashboard data={data} />
       </div>
     </PhoneShell>

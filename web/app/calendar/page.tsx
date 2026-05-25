@@ -7,12 +7,9 @@ import { Icon } from "@/components/Icon";
 import { CalendarView } from "./CalendarView";
 import { NewEventButton } from "./NewEventButton";
 import { EVENT_KINDS, type EventKind } from "./kinds";
+import { todayIst } from "@/lib/format";
 
 export const revalidate = 30;
-
-// Anchored to the seed-data baseline for "today"; swap to live time when
-// the rest of the app stops baking the date into queries.
-const TODAY = "2026-05-24";
 
 export type CalendarEntry = {
   id: string;
@@ -32,7 +29,8 @@ export default async function CalendarPage({
   searchParams: Promise<{ month?: string; kind?: string; sort?: string; q?: string }>;
 }) {
   const params = await searchParams;
-  const monthParam = params.month ?? TODAY.slice(0, 7);
+  const today = todayIst();
+  const monthParam = params.month ?? today.slice(0, 7);
   const sort = params.sort === "desc" ? "desc" : "asc";
   const kindFilter = params.kind ?? "all";
   const q = (params.q ?? "").trim();
@@ -138,13 +136,13 @@ export default async function CalendarPage({
                 {monthLabel(monthParam)} · {allEntries.length} entries · IST
               </div>
             </div>
-            <NewEventButton initialDate={TODAY} />
+            <NewEventButton initialDate={today} />
           </div>
         </header>
 
         <CalendarView
           month={monthParam}
-          today={TODAY}
+          today={today}
           entries={allEntries}
           initialKind={kindFilter}
           initialSort={sort}

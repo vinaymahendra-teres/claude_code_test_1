@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { requireAuth, requireRole } from "@/lib/auth-helpers";
+import { todayIst } from "@/lib/format";
 
 export async function toggleConsent(customerId: string, nextState: "Y" | "N") {
   await requireAuth();
@@ -13,7 +14,7 @@ export async function toggleConsent(customerId: string, nextState: "Y" | "N") {
   }
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
-  const today = "2026-05-24";
+  const today = todayIst();
   const { error } = await supabase
     .from("customers")
     .update({
@@ -100,7 +101,7 @@ export async function createCustomer(input: NewCustomerInput): Promise<string> {
     instagram: input.instagram.trim() || null,
     area: input.area.trim() || null,
     tags: input.tags,
-    since: "2026-05-24",
+    since: todayIst(),
     order_count: 0,
     lifetime_value: 0,
     avatar_tone: "caramel",

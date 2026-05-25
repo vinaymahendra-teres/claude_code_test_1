@@ -8,6 +8,42 @@
 
 export const IST = "Asia/Kolkata";
 
+// YYYY-MM-DD in Asia/Kolkata, independent of the server's timezone. Use this
+// instead of `new Date().toISOString().slice(0, 10)` (which is UTC).
+export function todayIst(): string {
+  // en-CA's short-date format is YYYY-MM-DD which is exactly what we want.
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: IST,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+export function plusDaysIst(iso: string, n: number): string {
+  // Treat the YYYY-MM-DD as a local calendar day (noon to dodge DST nuances),
+  // shift, and serialise back. Equivalent to "add N calendar days in IST."
+  const d = new Date(iso + "T12:00:00+05:30");
+  d.setDate(d.getDate() + n);
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: IST,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}
+
+// Long date label like "Monday, 25 May" in IST.
+export function fmtIstDayLabel(iso?: string | Date | null): string {
+  const date = iso ? (typeof iso === "string" ? new Date(iso + "T12:00:00+05:30") : iso) : new Date();
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: IST,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(date);
+}
+
 export const fmtIstTime = (d: Date | string | null | undefined) => {
   if (d == null) return "—";
   const date = typeof d === "string" ? new Date(d) : d;
@@ -61,13 +97,11 @@ export const fmtDate = (iso: string | null | undefined, { showYear = false } = {
   return `${d.getDate()} ${months[d.getMonth()]}${showYear ? " " + d.getFullYear() : ""}`;
 };
 
-// Anchored to the seed-data baseline so the prototype's relative dates stay readable.
-const TODAY_ANCHOR = "2026-05-24";
-
 export const fmtRelative = (iso: string | null | undefined) => {
   if (!iso) return "—";
-  const today = new Date(TODAY_ANCHOR);
-  const d = new Date(iso);
+  // Anchor to "today in IST" so the relative copy follows the operator's day.
+  const today = new Date(todayIst() + "T12:00:00+05:30");
+  const d = new Date(iso.length === 10 ? iso + "T12:00:00+05:30" : iso);
   const days = Math.round((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   if (days === 0) return "Today";
   if (days === 1) return "Tomorrow";

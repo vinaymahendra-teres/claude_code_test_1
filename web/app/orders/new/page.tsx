@@ -1,14 +1,14 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { NewOrderForm } from "./NewOrderForm";
+import { todayIst } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
-
-const TODAY = "2026-05-24";
 
 export default async function NewOrderPage() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
+  const TODAY = todayIst();
 
   const [{ data: customers }, { data: recipes }, { data: blocked }, { data: orders }, { data: settings }] =
     await Promise.all([

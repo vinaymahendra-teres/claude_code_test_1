@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { PhoneShell } from "@/components/PhoneShell";
 import { Card, SectionHeader, Pill, Bars } from "@/components/ui";
 import { Icon } from "@/components/Icon";
-import { fmtMoney, fmtCompactMoney, fmtDate, fmtRelative } from "@/lib/format";
+import { fmtMoney, fmtCompactMoney, fmtDate, fmtRelative, todayIst } from "@/lib/format";
 
 import { AddExpenseButton } from "./AddExpenseButton";
 import { EditExpenseSheet } from "./EditExpenseSheet";
@@ -360,7 +360,7 @@ function TaxView({
 }: {
   compliance: { id: string; item: string; type: string | null; due_date: string; note: string | null }[];
 }) {
-  const TODAY = new Date("2026-05-24");
+  const TODAY = new Date(todayIst());
   const withDays = compliance.map((c) => {
     const d = new Date(c.due_date);
     const days = Math.round((d.getTime() - TODAY.getTime()) / 86400000);

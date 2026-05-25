@@ -5,8 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { requireAuth, requireRole } from "@/lib/auth-helpers";
-
-const TODAY = "2026-05-24";
+import { todayIst } from "@/lib/format";
 
 export type AutoFillMode = "none" | "low-stock" | "orders" | "both";
 
@@ -252,7 +251,8 @@ async function addOrderRequirementItems(listId: string, horizonDays: number) {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
-  const endDate = new Date(TODAY);
+  const today = todayIst();
+  const endDate = new Date(today);
   endDate.setDate(endDate.getDate() + horizonDays);
   const endISO = endDate.toISOString().slice(0, 10);
 
@@ -261,7 +261,7 @@ async function addOrderRequirementItems(listId: string, horizonDays: number) {
       supabase
         .from("orders")
         .select("id, flavor, delivery_date, status")
-        .gte("delivery_date", TODAY)
+        .gte("delivery_date", today)
         .lte("delivery_date", endISO)
         .not("status", "in", "(delivered,cancelled,draft)"),
       supabase.from("recipes").select("id, name, ingredients"),

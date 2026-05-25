@@ -5,14 +5,14 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, Avatar } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { markReceived } from "./actions";
+import { todayIst } from "@/lib/format";
 
 export const revalidate = 60;
-
-const TODAY = "2026-05-24";
 
 export default async function ReviewsPage() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
+  const TODAY = todayIst();
 
   const { data: orders } = await supabase
     .from("orders")

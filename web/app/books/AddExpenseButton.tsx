@@ -5,6 +5,7 @@ import { Field } from "@/components/ui";
 import { Button, TextInput, Sheet, SegmentedControl } from "@/components/ui-client";
 import { Icon } from "@/components/Icon";
 import { addExpense } from "./actions";
+import { todayIst } from "@/lib/format";
 
 const CATEGORIES = [
   "Ingredients",
@@ -20,11 +21,10 @@ const CATEGORIES = [
 
 const METHODS = ["UPI", "Cash", "Card", "Bank transfer"];
 
-const TODAY = "2026-05-24";
 
 export function AddExpenseButton() {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState(TODAY);
+  const [date, setDate] = useState(todayIst());
   const [vendor, setVendor] = useState("");
   const [category, setCategory] = useState("Ingredients");
   const [amount, setAmount] = useState("");
