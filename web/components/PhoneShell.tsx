@@ -30,13 +30,15 @@ export function PhoneShell({
         <div className="app-root">
           {/* Global "active branch" badge — reads from AppShell context so
               every screen (Server or Client) gets the same chrome without
-              its own data fetch. */}
+              its own data fetch. z-index 250 keeps it above the phone chrome
+              (notch / status-bar / home-indicator at 150-200) but below
+              sheets (300+). */}
           <div
             style={{
               position: "absolute",
-              top: 16,
+              top: 56,
               right: 14,
-              zIndex: 7,
+              zIndex: 250,
             }}
           >
             <GlobalBranchBadge />
