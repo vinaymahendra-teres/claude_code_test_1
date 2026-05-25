@@ -31,8 +31,11 @@ export default function ToolsPage() {
   const [scaleFrom, setScaleFrom] = useState("8");
   const [scaleTo, setScaleTo] = useState("12");
 
-  const cupsN = parseFloat(cupsValue);
-  const cupsGrams = isFinite(cupsN) ? Math.round((CUP_GRAMS[cupsIngredient] || 0) * cupsN) : null;
+  const cupsN = parseCups(cupsValue);
+  const cupsGrams =
+    cupsN != null && isFinite(cupsN)
+      ? Math.round((CUP_GRAMS[cupsIngredient] || 0) * cupsN)
+      : null;
 
   const tempN = parseFloat(tempValue);
   const tempOut = isFinite(tempN)
@@ -105,11 +108,20 @@ export default function ToolsPage() {
                   ))}
                 </select>
               </Field>
-              <Field label="Cups">
+              <Field
+                label="Cups"
+                hint={
+                  cupsValue && cupsN != null
+                    ? `Reading as ${formatCups(cupsN)} cup${cupsN === 1 ? "" : "s"}`
+                    : "Accepts 1, 1.5, 1/2, half, two and a half…"
+                }
+                error={cupsValue && cupsN == null ? "Hmm, couldn't read that" : undefined}
+              >
                 <TextInput
                   value={cupsValue}
-                  onChange={(e) => setCupsValue(e.target.value.replace(/[^0-9./]/g, ""))}
-                  placeholder="1"
+                  onChange={(e) => setCupsValue(e.target.value)}
+                  placeholder="e.g. 1/2 or half"
+                  error={!!cupsValue && cupsN == null}
                   style={{
                     fontSize: 22,
                     padding: "14px 12px",
@@ -285,6 +297,107 @@ function uppercase(tone: "caramel" | "rose" | "sage"): React.CSSProperties {
     letterSpacing: "0.04em",
     textTransform: "uppercase",
   };
+}
+
+// ---------- parseCups: accept decimals, fractions, and English words ----------
+// Examples:
+//   "1"           -> 1
+//   "0.5", ".5"   -> 0.5
+//   "1/2"         -> 0.5
+//   "1 1/2"       -> 1.5
+//   "half"        -> 0.5
+//   "a half"      -> 0.5
+//   "two thirds"  -> 0.6667
+//   "1 and 1/2"   -> 1.5
+//   "two and a half cups" -> 2.5
+function parseCups(raw: string): number | null {
+  if (!raw) return null;
+  let s = raw.toLowerCase().trim();
+  if (!s) return null;
+
+  // Strip "cup" / "cups" / "c." for forgiveness
+  s = s.replace(/\b(cups?|c\.?)\b/g, " ").trim();
+
+  // English word fractions first (order matters — handle "three quarters" before "three")
+  const wordFractions: Array<[RegExp, string]> = [
+    [/\bthree[\s-]?quarters?\b/g, "3/4"],
+    [/\btwo[\s-]?thirds?\b/g, "2/3"],
+    [/\btwo[\s-]?fifths?\b/g, "2/5"],
+    [/\bthree[\s-]?fifths?\b/g, "3/5"],
+    [/\bfour[\s-]?fifths?\b/g, "4/5"],
+    [/\bthree[\s-]?eighths?\b/g, "3/8"],
+    [/\bfive[\s-]?eighths?\b/g, "5/8"],
+    [/\bseven[\s-]?eighths?\b/g, "7/8"],
+    // Match "one half"/"a half"/"an half" as a single 1/2, before the
+    // standalone "half" rule that follows (otherwise "one half" leaves an
+    // orphan "one" that gets read as the integer 1 and yields 1.5).
+    [/\b(?:one|a|an)[\s-]+(?:halves|half)\b/g, "1/2"],
+    [/\b(?:halves|half)\b/g, "1/2"],
+    [/\b(?:one|a)[\s-]+quarter\b/g, "1/4"],
+    [/\bquarter\b/g, "1/4"],
+    [/\b(?:one|a)[\s-]+third\b/g, "1/3"],
+    [/\bthird\b/g, "1/3"],
+    [/\b(?:one|a)[\s-]+fifth\b/g, "1/5"],
+    [/\bfifth\b/g, "1/5"],
+    [/\b(?:one|an)[\s-]+eighth\b/g, "1/8"],
+    [/\beighth\b/g, "1/8"],
+  ];
+  for (const [re, val] of wordFractions) s = s.replace(re, ` ${val} `);
+
+  // Whole-number words
+  const wordNums: Record<string, string> = {
+    one: "1", two: "2", three: "3", four: "4", five: "5",
+    six: "6", seven: "7", eight: "8", nine: "9", ten: "10",
+  };
+  for (const [w, n] of Object.entries(wordNums)) {
+    s = s.replace(new RegExp(`\\b${w}\\b`, "g"), n);
+  }
+
+  // "and" and stray "a/an" → space (used as connectors in "one and a half")
+  s = s.replace(/\b(and|a|an)\b/g, " ");
+
+  // Collapse whitespace
+  s = s.replace(/\s+/g, " ").trim();
+  if (!s) return null;
+
+  // Now: mixed "N M/D"
+  let m = s.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if (m) {
+    const whole = parseInt(m[1], 10);
+    const num = parseInt(m[2], 10);
+    const den = parseInt(m[3], 10);
+    if (den === 0) return null;
+    return whole + num / den;
+  }
+
+  // Pure fraction "M/D"
+  m = s.match(/^(\d+)\/(\d+)$/);
+  if (m) {
+    const num = parseInt(m[1], 10);
+    const den = parseInt(m[2], 10);
+    if (den === 0) return null;
+    return num / den;
+  }
+
+  // Plain number "1", "0.5", "1.5", ".5"
+  m = s.match(/^(\d+(?:\.\d+)?|\.\d+)$/);
+  if (m) return parseFloat(m[1]);
+
+  // Two numbers separated by whitespace, e.g. "1 0.5" — treat as sum (rare but
+  // covers "one zero point five" weirdness, mainly here as safety net).
+  m = s.match(/^(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/);
+  if (m) return parseFloat(m[1]) + parseFloat(m[2]);
+
+  return null;
+}
+
+// Show parsed value back to user — small mixed-fraction-ish format
+function formatCups(n: number): string {
+  if (!isFinite(n) || n < 0) return "—";
+  if (Number.isInteger(n)) return String(n);
+  // Two-decimal max, strip trailing zeros
+  const rounded = Math.round(n * 100) / 100;
+  return String(rounded).replace(/\.?0+$/, "");
 }
 
 const chromeHeader: React.CSSProperties = {
