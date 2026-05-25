@@ -75,7 +75,7 @@ export default async function OrdersPage({
                 {activeCount} active
               </div>
             </div>
-            <Link href="/" style={{ ...linkButton, background: "var(--caramel)", color: "var(--surface)", width: 34, height: 34 }} title="New order">
+            <Link href="/orders/new" style={{ ...linkButton, background: "var(--caramel)", color: "var(--surface)", width: 34, height: 34 }} title="New order">
               <Icon.Plus size={20} />
             </Link>
           </div>
