@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createClient } from "@/utils/supabase/middleware";
 import { auth } from "@/auth";
 
 const PUBLIC_PATHS = ["/login"];
@@ -11,11 +10,8 @@ function isPublic(pathname: string) {
 }
 
 export async function middleware(request: NextRequest) {
-  // Refresh Supabase auth cookies for SSR data access (unrelated to NextAuth).
-  const response = await createClient(request);
-
   const { pathname } = request.nextUrl;
-  if (isPublic(pathname)) return response;
+  if (isPublic(pathname)) return NextResponse.next();
 
   const session = await auth();
   if (!session?.user) {
@@ -25,7 +21,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

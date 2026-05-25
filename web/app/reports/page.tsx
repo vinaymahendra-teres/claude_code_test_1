@@ -6,7 +6,7 @@ import { Card, SectionHeader, Bars, StmtRow } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const TABS = [
   { value: "pl", label: "P & L" },

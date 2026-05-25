@@ -6,7 +6,7 @@ import { Card, CakeArt, StatusPill, SectionHeader, Pill } from "@/components/ui"
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate, fmtRelative } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const TAB_FILTERS: Record<string, (status: string) => boolean> = {
   active: (s) => s !== "delivered" && s !== "draft",

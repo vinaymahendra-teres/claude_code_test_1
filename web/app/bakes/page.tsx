@@ -6,7 +6,7 @@ import { Card, StatTile, StatusPill } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtCompactMoney, fmtDate } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const TODAY = "2026-05-24";
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

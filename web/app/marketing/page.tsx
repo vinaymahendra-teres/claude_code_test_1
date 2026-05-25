@@ -6,7 +6,7 @@ import { Card, SectionHeader, Pill, StatTile } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type Campaign = {
   id: string;

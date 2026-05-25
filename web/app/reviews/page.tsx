@@ -6,7 +6,7 @@ import { Card, Avatar } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { markReceived } from "./actions";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const TODAY = "2026-05-24";
 

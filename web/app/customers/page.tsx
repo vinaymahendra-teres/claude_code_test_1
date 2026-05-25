@@ -6,7 +6,7 @@ import { Card, Avatar, Pill, StatTile, SectionHeader } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtCompactMoney } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type CustomerRow = {
   id: string;

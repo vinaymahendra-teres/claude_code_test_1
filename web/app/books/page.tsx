@@ -8,7 +8,7 @@ import { fmtMoney, fmtCompactMoney, fmtDate, fmtRelative } from "@/lib/format";
 
 import { AddExpenseButton } from "./AddExpenseButton";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const TABS = [
   { value: "overview", label: "Overview" },
