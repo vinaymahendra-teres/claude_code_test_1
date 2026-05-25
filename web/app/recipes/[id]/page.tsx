@@ -6,6 +6,9 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, CakeArt, Pill, SectionHeader, StatTile } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney } from "@/lib/format";
+import { EditRecipeSheet } from "./EditRecipeSheet";
+import { ConfirmDelete } from "@/components/ConfirmDelete";
+import { deleteRecipe } from "./actions";
 
 export const revalidate = 60;
 
@@ -122,6 +125,30 @@ export default async function RecipeDetailPage({
               {totalMins}m total ·{" "}
               {ingredients.length} ingredient{ingredients.length === 1 ? "" : "s"} ·{" "}
               {method.length} step{method.length === 1 ? "" : "s"}
+            </div>
+
+            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+              <EditRecipeSheet
+                id={r.id}
+                initial={{
+                  name: r.name,
+                  category: r.category ?? "Other",
+                  eggless: !!r.eggless,
+                  yield_note: r.yield_note ?? "",
+                  prep_mins: r.prep_mins ?? 0,
+                  bake_mins: r.bake_mins ?? 0,
+                  cost_per_cake: r.cost_per_cake ?? 0,
+                  ingredients,
+                  method,
+                }}
+              />
+              <ConfirmDelete
+                label={r.name}
+                description="Removes this recipe permanently. Orders that reference it by flavor name keep history but lose the recipe link."
+                confirmWord="DELETE"
+                buttonLabel="Delete recipe"
+                onConfirm={deleteRecipe.bind(null, r.id)}
+              />
             </div>
 
             {ingredients.length > 0 && (

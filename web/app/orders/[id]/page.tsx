@@ -7,6 +7,7 @@ import { Card, CakeArt, StatusPill, SectionHeader, Pill, Avatar } from "@/compon
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate } from "@/lib/format";
 import { advanceStage } from "./actions";
+import { EditOrderSheet } from "./EditOrderSheet";
 
 export const dynamic = "force-dynamic";
 
@@ -130,6 +131,22 @@ export default async function OrderDetailPage({
                   </div>
                 );
               })}
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <EditOrderSheet
+                id={order.id}
+                canCancel={order.status !== "delivered" && order.status !== "cancelled"}
+                initial={{
+                  title: order.title ?? "",
+                  price: order.price ?? 0,
+                  deposit: order.deposit ?? 0,
+                  delivery_date: order.delivery_date ?? "",
+                  delivery_slot: order.delivery_slot ?? "",
+                  delivery_area: order.delivery_area ?? "",
+                  cold_chain_notes: order.cold_chain_notes ?? "",
+                  notes: order.notes ?? "",
+                }}
+              />
             </div>
             {NEXT_STAGE_LABEL[order.status] && (
               <form
