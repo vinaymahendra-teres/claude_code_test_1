@@ -81,6 +81,7 @@ export default async function HomePage() {
               {/* Hero card — this-week revenue */}
                   <div
                     style={{
+                      marginTop: 20,
                       borderRadius: 18,
                       background:
                         "linear-gradient(135deg, oklch(0.30 0.08 50), oklch(0.22 0.04 50))",

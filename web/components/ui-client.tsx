@@ -3,7 +3,8 @@
 // Interactive UI primitives — anything with event handlers or local state.
 // Ported from app/src/ui.jsx.
 
-import { type CSSProperties, type ReactNode, useState } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "./Icon";
 
 // ---------- Button + IconButton ----------
@@ -364,8 +365,19 @@ export function Sheet({
   snap?: "auto" | "full";
   children: ReactNode;
 }) {
-  if (!open) return null;
-  return (
+  // Render through a portal anchored to .app-root so the overlay always fills
+  // the phone interior — independent of any positioned ancestor (e.g. the home
+  // header, or a sticky chrome header) that would otherwise trap inset:0.
+  const [target, setTarget] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    const el = document.querySelector<HTMLElement>(".app-root");
+    setTarget(el ?? document.body);
+  }, [open]);
+
+  if (!open || !target) return null;
+
+  const overlay = (
     <div
       onClick={onClose}
       style={{
@@ -424,6 +436,8 @@ export function Sheet({
       </div>
     </div>
   );
+
+  return createPortal(overlay, target);
 }
 
 // Re-export useState so consumers can construct simple Sheet open/close pairs without separate imports.
