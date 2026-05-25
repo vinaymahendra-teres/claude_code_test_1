@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { BottomNav } from "./BottomNav";
 
 export function PhoneShell({
   children,
@@ -25,7 +26,10 @@ export function PhoneShell({
         <div className="status-bar">
           <span>9:41</span>
         </div>
-        <div className="app-root">{children}</div>
+        <div className="app-root">
+          {children}
+          <BottomNav />
+        </div>
         <div className="home-indicator" />
       </main>
 

@@ -1,6 +1,9 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { fmtMoney, fmtCompactMoney, fmtDate } from "@/lib/format";
+import { PhoneShell } from "@/components/PhoneShell";
+import { HomeHeader } from "@/components/home/HomeHeader";
+import { QuickActions } from "@/components/home/QuickActions";
 
 // Anchor "today" to the seed-data baseline so the prototype's numbers stay readable.
 // When real time-aware queries land, swap to new Date().toISOString().slice(0, 10).
@@ -64,69 +67,18 @@ export default async function HomePage() {
   const isFirstRun = activeOrders == null && allInventory == null;
 
   return (
-    <div className="desktop">
-      <aside className="side side-l">
-        <div className="brandmark" style={{ justifyContent: "flex-end" }}>
-          <span>Tiered Cake Co.</span>
-          <span className="logo" aria-hidden="true" />
-        </div>
-        <p style={{ fontSize: 13 }}>
-          All-in-one workspace for the small custom-cake business — built phone-first so it lives where the orders come from: in your hand, between piping bags.
-        </p>
-        <h2>Modules</h2>
-        <p>
-          CRM · Sales · Operations · Marketing · Accounting · Reports — one product, one mental model.
-        </p>
-        <h2>Status</h2>
-        <ul style={{ listStyle: "none" }}>
-          <li>
-            <span className="pill">Next.js 15</span>
-          </li>
-          <li>
-            <span className="pill">Supabase</span>
-          </li>
-          <li>
-            <span className="pill">{isFirstRun ? "Schema pending" : "Live data"}</span>
-          </li>
-        </ul>
-      </aside>
+    <PhoneShell>
+      <div data-screen-label="Home">
+        <HomeHeader dateLabel="Sunday, 24 May" greeting="Morning" />
 
-      <main className="phone" data-screen-label="Phone preview">
-        <div className="notch" />
-        <div className="status-bar">
-          <span>9:41</span>
-        </div>
-        <div className="app-root">
-          <div data-screen-label="Home">
-            <header style={{ position: "relative", padding: "54px 22px 8px" }}>
-              <div
-                style={{
-                  fontSize: 12.5,
-                  color: "var(--muted)",
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Sunday, 24 May
-              </div>
-              <div
-                style={{
-                  fontFamily: "DM Serif Display, serif",
-                  fontSize: 28,
-                  marginTop: 4,
-                  lineHeight: 1.1,
-                }}
-              >
-                Morning, Anita
-              </div>
-            </header>
+        <div style={{ padding: "6px 18px 100px", overflowY: "auto", flex: 1 }}>
+          {isFirstRun ? (
+            <FirstRunNotice />
+          ) : (
+            <>
+              <QuickActions />
 
-            <div style={{ padding: "6px 18px 100px", overflowY: "auto", flex: 1 }}>
-              {isFirstRun ? (
-                <FirstRunNotice />
-              ) : (
-                <>
-                  {/* Hero card — this-week revenue */}
+              {/* Hero card — this-week revenue */}
                   <div
                     style={{
                       borderRadius: 18,
@@ -320,35 +272,11 @@ export default async function HomePage() {
                       </div>
                     </>
                   )}
-                </>
-              )}
-            </div>
-          </div>
+            </>
+          )}
         </div>
-        <div className="home-indicator" />
-      </main>
-
-      <aside className="side side-r">
-        <div className="brandmark">
-          <span className="logo" aria-hidden="true" />
-          <span>Hyderabad</span>
-        </div>
-        <p style={{ fontSize: 13 }}>
-          Next.js full-stack edition. Data is served from Supabase Postgres — first-run
-          guidance is visible until the schema migration is applied and seeded.
-        </p>
-        <h2>Next steps</h2>
-        <ul>
-          <li>
-            Run the migration in <code>supabase/migrations/0001_initial_schema.sql</code>.
-          </li>
-          <li>
-            Seed with <code>npm run seed</code> (needs the secret key in <code>.env.local</code>).
-          </li>
-          <li>Deploy to Vercel — see DEPLOY.md.</li>
-        </ul>
-      </aside>
-    </div>
+      </div>
+    </PhoneShell>
   );
 }
 
