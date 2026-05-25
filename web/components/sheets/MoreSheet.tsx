@@ -28,7 +28,25 @@ const ALL_ROUTES: Array<{
   { slug: "tools", href: "/tools", label: "Tools", icon: "Sparkle", desc: "Conversions" },
 ];
 
-export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+const ADMIN_ROUTES: Array<{
+  slug: string;
+  href: string;
+  label: string;
+  icon: keyof typeof Icon;
+  desc: string;
+}> = [
+  { slug: "users", href: "/admin/users", label: "Users", icon: "Users", desc: "Roles, passwords, access" },
+];
+
+export function MoreSheet({
+  open,
+  onClose,
+  isAdmin,
+}: {
+  open: boolean;
+  onClose: () => void;
+  isAdmin?: boolean;
+}) {
   const { modeDef } = useAppShell();
   const [modeOpen, setModeOpen] = useState(false);
   const [tweaksOpen, setTweaksOpen] = useState(false);
@@ -106,6 +124,42 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
               </Link>
             );
           })}
+
+          {isAdmin && (
+            <>
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "var(--muted)",
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  margin: "16px 12px 6px",
+                }}
+              >
+                Admin
+              </div>
+              {ADMIN_ROUTES.map((r) => {
+                const IconComp = Icon[r.icon];
+                return (
+                  <Link
+                    key={r.slug}
+                    href={r.href}
+                    onClick={() => onClose()}
+                    style={{ ...settingsRow, textDecoration: "none", color: "inherit" }}
+                  >
+                    <span style={settingsIcon("plum")}>
+                      <IconComp size={18} />
+                    </span>
+                    <div style={{ flex: 1 }}>
+                      <div style={settingsLabel}>{r.label}</div>
+                      <div style={settingsDesc}>{r.desc}</div>
+                    </div>
+                    <Icon.Chevron size={16} style={{ color: "var(--muted)" }} />
+                  </Link>
+                );
+              })}
+            </>
+          )}
 
           <div style={{ height: 14 }} />
 

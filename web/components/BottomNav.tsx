@@ -42,7 +42,7 @@ const NAV_SCREEN_ROUTES = new Set([
 ]);
 
 export function BottomNav() {
-  const { modeDef } = useAppShell();
+  const { modeDef, isAdmin } = useAppShell();
   const pathname = usePathname() || "/";
   const [moreOpen, setMoreOpen] = useState(false);
 
@@ -80,7 +80,7 @@ export function BottomNav() {
           );
         })}
       </nav>
-      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} isAdmin={isAdmin} />
     </>
   );
 }

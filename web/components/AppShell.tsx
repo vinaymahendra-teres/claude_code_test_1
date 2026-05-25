@@ -138,6 +138,7 @@ type AppShellState = {
   setMode: (id: ModeId) => void;
   tweaks: Tweaks;
   setTweak: <K extends keyof Tweaks>(key: K, value: Tweaks[K]) => void;
+  isAdmin: boolean;
 };
 
 const AppShellContext = createContext<AppShellState | null>(null);
@@ -153,6 +154,7 @@ export function useAppShell(): AppShellState {
       setMode: () => {},
       tweaks: DEFAULT_TWEAKS,
       setTweak: () => {},
+      isAdmin: false,
     };
   }
   return ctx;
@@ -202,7 +204,13 @@ function applyTweaks(t: Tweaks) {
 
 // ---------- Provider ----------
 
-export function AppShell({ children }: { children: ReactNode }) {
+export function AppShell({
+  children,
+  isAdmin = false,
+}: {
+  children: ReactNode;
+  isAdmin?: boolean;
+}) {
   const [mode, setModeState] = useState<ModeId>(DEFAULT_MODE);
   const [tweaks, setTweaksState] = useState<Tweaks>(DEFAULT_TWEAKS);
   const [hydrated, setHydrated] = useState(false);
@@ -257,7 +265,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <AppShellContext.Provider
-      value={{ mode, modeDef: MODES[mode], setMode, tweaks, setTweak }}
+      value={{ mode, modeDef: MODES[mode], setMode, tweaks, setTweak, isAdmin }}
     >
       {children}
     </AppShellContext.Provider>

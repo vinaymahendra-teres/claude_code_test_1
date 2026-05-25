@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
+import { auth, hasRole } from "@/auth";
 
 export const metadata: Metadata = {
   title: "Tiered Cake Company — Run the bakery",
@@ -8,11 +9,14 @@ export const metadata: Metadata = {
     "All-in-one workspace for a Hyderabad home bakery — CRM, sales, operations, marketing, accounting and reports in one phone-first app.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  const isAdmin = hasRole(session?.user?.role, "admin");
+
   return (
     <html lang="en">
       <head>
@@ -24,7 +28,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <AppShell>{children}</AppShell>
+        <AppShell isAdmin={isAdmin}>{children}</AppShell>
       </body>
     </html>
   );
