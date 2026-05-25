@@ -9,6 +9,8 @@ import { fmtMoney } from "@/lib/format";
 import { EditRecipeSheet } from "./EditRecipeSheet";
 import { ConfirmDelete } from "@/components/ConfirmDelete";
 import { deleteRecipe } from "./actions";
+import { AttachmentGrid } from "@/components/AttachmentGrid";
+import { listAttachments } from "@/lib/attachments-actions";
 
 export const revalidate = 60;
 
@@ -77,6 +79,8 @@ export default async function RecipeDetailPage({
 
   const tone = r.eggless ? "sage" : "caramel";
   const totalMins = (r.prep_mins ?? 0) + (r.bake_mins ?? 0);
+
+  const gallery = await listAttachments("recipe", r.id);
 
   return (
     <PhoneShell>
@@ -150,6 +154,15 @@ export default async function RecipeDetailPage({
                 onConfirm={deleteRecipe.bind(null, r.id)}
               />
             </div>
+
+            <SectionHeader>Gallery</SectionHeader>
+            <AttachmentGrid
+              entityType="recipe"
+              entityId={r.id}
+              kind="gallery"
+              initial={gallery}
+              emptyHint="Add finished cake photos — feeds the website and the order conversation."
+            />
 
             {ingredients.length > 0 && (
               <>

@@ -8,6 +8,8 @@ import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate } from "@/lib/format";
 import { advanceStage } from "./actions";
 import { EditOrderSheet } from "./EditOrderSheet";
+import { AttachmentGrid } from "@/components/AttachmentGrid";
+import { listAttachments } from "@/lib/attachments-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +66,10 @@ export default async function OrderDetailPage({
     const key = order.flavor.toLowerCase();
     recipe = (recipes ?? []).find((r) => key.includes(r.name.toLowerCase())) ?? null;
   }
+
+  const attachments = await listAttachments("order", order.id);
+  const references = attachments.filter((a) => a.kind === "reference" || a.kind === "other");
+  const delivered = attachments.filter((a) => a.kind === "delivered");
 
   const currentIdx = STAGES.findIndex((s) => s.key === order.status);
 
@@ -244,6 +250,29 @@ export default async function OrderDetailPage({
                   </div>
                 </Link>
               </Card>
+            </>
+          )}
+
+          {/* References + delivered photos */}
+          <SectionHeader>References</SectionHeader>
+          <AttachmentGrid
+            entityType="order"
+            entityId={order.id}
+            kind="reference"
+            initial={references}
+            emptyHint="Drop screenshots, DM links, or competitor inspo for this cake."
+          />
+
+          {(delivered.length > 0 || order.status === "delivered" || order.status === "ready") && (
+            <>
+              <SectionHeader>Delivered photos</SectionHeader>
+              <AttachmentGrid
+                entityType="order"
+                entityId={order.id}
+                kind="delivered"
+                initial={delivered}
+                emptyHint="Snap the finished cake before handover — feeds the portfolio."
+              />
             </>
           )}
 
