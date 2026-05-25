@@ -5,6 +5,8 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, SectionHeader } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtCompactMoney } from "@/lib/format";
+import { InventoryItemSheet } from "./InventoryItemSheet";
+import { AddInventoryButton } from "./AddInventoryButton";
 
 export const revalidate = 60;
 
@@ -76,6 +78,7 @@ export default async function InventoryPage({
                 {all.length} items · {fmtCompactMoney(Math.round(totalValue))} value
               </div>
             </div>
+            <AddInventoryButton />
           </div>
         </header>
 
@@ -147,16 +150,32 @@ export default async function InventoryPage({
                           }}
                         >
                           <div style={{ fontSize: 13.5, fontWeight: 600 }}>{item.name}</div>
-                          <div
-                            style={{
-                              fontSize: 13,
-                              fontWeight: 600,
-                              color: low ? "var(--danger)" : "var(--ink)",
-                              fontFamily: "JetBrains Mono, monospace",
-                            }}
-                          >
-                            {item.qty}
-                            {item.unit}
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <div
+                              style={{
+                                fontSize: 13,
+                                fontWeight: 600,
+                                color: low ? "var(--danger)" : "var(--ink)",
+                                fontFamily: "JetBrains Mono, monospace",
+                              }}
+                            >
+                              {item.qty}
+                              {item.unit}
+                            </div>
+                            <InventoryItemSheet
+                              item={{
+                                id: item.id,
+                                name: item.name,
+                                category: item.category,
+                                qty: Number(item.qty),
+                                unit: item.unit,
+                                reorder_at: Number(item.reorder_at),
+                                unit_cost: Number(item.unit_cost),
+                                supplier: item.supplier ?? "",
+                                reorder_qty: Number(item.reorder_qty ?? 0),
+                                days_cover_at_typical_use: item.days_cover_at_typical_use,
+                              }}
+                            />
                           </div>
                         </div>
                         <div

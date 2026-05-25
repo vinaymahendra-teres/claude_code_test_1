@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtCompactMoney, fmtDate, fmtRelative } from "@/lib/format";
 
 import { AddExpenseButton } from "./AddExpenseButton";
+import { EditExpenseSheet } from "./EditExpenseSheet";
 
 export const revalidate = 60;
 
@@ -329,6 +330,18 @@ function Transactions({
                   </div>
                   <div style={{ fontSize: 10.5, color: "var(--muted)", marginTop: 2 }}>{t.method}</div>
                 </div>
+                <EditExpenseSheet
+                  id={t.id}
+                  initial={{
+                    date: t.date,
+                    vendor: t.vendor,
+                    category: t.category,
+                    amount: t.amount,
+                    method: t.method ?? "",
+                    note: t.note ?? "",
+                    upi_reference_utr: "",
+                  }}
+                />
               </div>
             ))}
           </Card>

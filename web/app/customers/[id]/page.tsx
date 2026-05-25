@@ -6,7 +6,9 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, CakeArt, StatusPill, SectionHeader, Pill, Avatar } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtCompactMoney, fmtDate } from "@/lib/format";
-import { toggleConsent } from "./actions";
+import { toggleConsent, deleteCustomer } from "./actions";
+import { EditCustomerSheet } from "./EditCustomerSheet";
+import { ConfirmDelete } from "@/components/ConfirmDelete";
 
 export const dynamic = "force-dynamic";
 
@@ -131,6 +133,28 @@ export default async function CustomerDetailPage({
             </Card>
           </div>
 
+          {/* Edit / Delete row */}
+          <div style={{ padding: "0 18px", display: "flex", gap: 8, marginTop: 12 }}>
+            <EditCustomerSheet
+              customerId={id}
+              initial={{
+                name: c.name,
+                phone: c.phone ?? "",
+                instagram: c.instagram ?? "",
+                area: c.area ?? "",
+                tags: c.tags ?? [],
+                notes: c.notes ?? "",
+              }}
+            />
+            <ConfirmDelete
+              label={c.name}
+              description={`Removes this customer permanently. Their past orders stay, but lose the link to this profile.`}
+              confirmWord="DELETE"
+              buttonLabel="Delete customer"
+              onConfirm={deleteCustomer.bind(null, id)}
+            />
+          </div>
+
           {/* Tabs */}
           <div style={{ padding: "14px 18px 8px" }}>
             <TabRow current={tab} customerId={id} />
@@ -145,6 +169,7 @@ export default async function CustomerDetailPage({
     </PhoneShell>
   );
 }
+
 
 function OverviewTab({ c, orders }: { c: Customer; orders: Order[] }) {
   const inProgress = orders.filter(

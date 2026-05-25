@@ -2,29 +2,18 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { requireAuth, requireRole } from "@/lib/auth-helpers";
 
-/**
- * Flip a customer's marketing_consent between 'Y' and 'N'.
- * DPDP Act 2023 compliance — every change carries a date stamp.
- *
- * Bound from the page like:
- *   const action = toggleConsent.bind(null, customerId, 'Y');
- *   <form action={action}>...</form>
- */
-export async function toggleConsent(
-  customerId: string,
-  nextState: "Y" | "N",
-) {
+export async function toggleConsent(customerId: string, nextState: "Y" | "N") {
+  await requireAuth();
   if (nextState !== "Y" && nextState !== "N") {
     throw new Error("nextState must be 'Y' or 'N'");
   }
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
-
-  // Anchored to seed-data baseline so today's relative dates stay readable.
   const today = "2026-05-24";
-
   const { error } = await supabase
     .from("customers")
     .update({
@@ -32,12 +21,93 @@ export async function toggleConsent(
       consent_date: nextState === "Y" ? today : null,
     })
     .eq("id", customerId);
-
-  if (error) {
-    throw new Error(`Failed to update consent for ${customerId}: ${error.message}`);
-  }
-
-  // Refresh both this customer's page and the customers list so the dot updates
+  if (error) throw new Error(`Failed to update consent: ${error.message}`);
   revalidatePath(`/customers/${customerId}`);
   revalidatePath(`/customers`);
+}
+
+export type CustomerEdit = {
+  name: string;
+  phone: string;
+  instagram: string;
+  area: string;
+  tags: string[];
+  notes: string;
+};
+
+export async function updateCustomer(customerId: string, patch: CustomerEdit) {
+  await requireAuth();
+  if (!patch.name.trim()) throw new Error("Name cannot be empty");
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const { error } = await supabase
+    .from("customers")
+    .update({
+      name: patch.name.trim(),
+      phone: patch.phone.trim() || null,
+      instagram: patch.instagram.trim() || null,
+      area: patch.area.trim() || null,
+      tags: patch.tags,
+      notes: patch.notes.trim() || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", customerId);
+  if (error) throw new Error(`Failed to update customer: ${error.message}`);
+  revalidatePath(`/customers/${customerId}`);
+  revalidatePath(`/customers`);
+}
+
+export async function deleteCustomer(customerId: string) {
+  await requireRole("admin");
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  // FK on orders.customer_id is ON DELETE SET NULL, so order history survives.
+  const { error } = await supabase.from("customers").delete().eq("id", customerId);
+  if (error) throw new Error(`Failed to delete customer: ${error.message}`);
+  revalidatePath(`/customers`);
+  revalidatePath(`/orders`);
+  redirect("/customers");
+}
+
+export type NewCustomerInput = {
+  name: string;
+  phone: string;
+  instagram: string;
+  area: string;
+  tags: string[];
+};
+
+export async function createCustomer(input: NewCustomerInput): Promise<string> {
+  await requireAuth();
+  if (!input.name.trim()) throw new Error("Name is required");
+  if (!input.phone.trim() && !input.instagram.trim()) {
+    throw new Error("Add a phone or Instagram handle");
+  }
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+
+  const slug = input.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 24);
+  const id = `c-${slug || "new"}-${Date.now().toString(36)}`;
+
+  const { error } = await supabase.from("customers").insert({
+    id,
+    name: input.name.trim(),
+    phone: input.phone.trim() || null,
+    instagram: input.instagram.trim() || null,
+    area: input.area.trim() || null,
+    tags: input.tags,
+    since: "2026-05-24",
+    order_count: 0,
+    lifetime_value: 0,
+    avatar_tone: "caramel",
+    marketing_consent: "N",
+  });
+  if (error) throw new Error(`Failed to create customer: ${error.message}`);
+
+  revalidatePath("/customers");
+  return id;
 }

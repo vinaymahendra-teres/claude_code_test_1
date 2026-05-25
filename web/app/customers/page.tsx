@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { AddCustomerButton } from "./AddCustomerButton";
 import { createClient } from "@/utils/supabase/server";
 import { PhoneShell } from "@/components/PhoneShell";
 import { Card, Avatar, Pill, StatTile, SectionHeader } from "@/components/ui";
@@ -72,6 +73,7 @@ export default async function CustomersPage({
                 {total} contacts · {vipCount} VIP · {consentedCount} consented
               </div>
             </div>
+            <AddCustomerButton />
           </div>
         </header>
 
