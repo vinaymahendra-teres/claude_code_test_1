@@ -188,6 +188,8 @@ export function CakeArt({
   const [c1, c2] = tones[tone] || tones.caramel;
   return (
     <div
+      className="cake-art"
+      data-low-fallback={c1}
       style={{
         width: size,
         height: size,

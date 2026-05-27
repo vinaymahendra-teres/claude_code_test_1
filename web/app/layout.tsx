@@ -3,6 +3,7 @@ import { DM_Sans, DM_Serif_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { LowDataBodyClass } from "@/components/LowDataBodyClass";
 import { auth, hasRole } from "@/auth";
 import { listActiveBranches } from "@/lib/branches";
 import { getActiveBranchId } from "@/lib/branch-context";
@@ -65,6 +66,7 @@ export default async function RootLayout({
     >
       <body>
         <ServiceWorkerRegister />
+        <LowDataBodyClass />
         <AppShell isAdmin={isAdmin} branches={appBranches} activeBranchId={activeBranchId}>
           {children}
         </AppShell>

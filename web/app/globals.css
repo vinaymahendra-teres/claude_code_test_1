@@ -38,6 +38,14 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; padding: 0; }
+
+/* Connection-aware degradation. LowDataBodyClass flips data-low-data on
+   body when the link is 2G/slow-2G or the OS Save-Data toggle is on.
+   The CakeArt repeating-gradient becomes a flat tone so cheap phones
+   skip the per-tile paint cost. */
+body[data-low-data] .cake-art {
+  background: var(--caramel-soft) !important;
+}
 body {
   font-family: var(--font-sans), "DM Sans", system-ui, sans-serif;
   background: var(--bg-deep);

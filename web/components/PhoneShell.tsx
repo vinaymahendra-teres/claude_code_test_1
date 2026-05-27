@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
 import { GlobalBranchBadge } from "./GlobalBranchBadge";
+import { ConnectionBanner } from "./ConnectionBanner";
 
 export function PhoneShell({
   children,
@@ -28,6 +29,7 @@ export function PhoneShell({
           <span>9:41</span>
         </div>
         <div className="app-root">
+          <ConnectionBanner />
           {/* Global "active branch" badge — parked in the status-bar zone
               (opposite the "9:41" clock) so it stays above page chrome
               headers without overlapping their back/action buttons.
