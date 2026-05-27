@@ -8,6 +8,16 @@ import { Sheet, TextInput, Button, SegmentedControl } from "@/components/ui-clie
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate } from "@/lib/format";
 import { createInvoiceForOrder, createReceiptForOrder } from "@/lib/billing-actions";
+import { enqueue, registerHandler } from "@/lib/offline-queue";
+
+// Make the receipt server action replayable from the offline queue.
+// Registered at module scope so the handler is available even before any
+// BillingSection mounts (OfflineQueueWatcher may flush on first paint).
+if (typeof window !== "undefined") {
+  registerHandler("createReceiptForOrder", (payload) =>
+    createReceiptForOrder(payload as Parameters<typeof createReceiptForOrder>[0]),
+  );
+}
 
 type Invoice = {
   id: string;
@@ -196,21 +206,46 @@ function RecordPaymentSheet({
       setError("Amount must be greater than zero");
       return;
     }
+    const payload = {
+      orderId,
+      amount: amt,
+      method,
+      upiReferenceUtr: utr,
+      payerVpa: vpa,
+      notes,
+      invoiceId: invoiceId || undefined,
+    };
+
+    // If we're already known-offline, skip the server round-trip and
+    // queue immediately so the operator sees instant acknowledgment.
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      enqueue("createReceiptForOrder", payload).then(() => {
+        onClose();
+        // No receipt id yet — drop the operator back to the order
+        // detail; the receipt link will appear after sync.
+        router.push(`/orders/${orderId}`);
+      });
+      return;
+    }
+
     startTransition(async () => {
       try {
-        const id = await createReceiptForOrder({
-          orderId,
-          amount: amt,
-          method,
-          upiReferenceUtr: utr,
-          payerVpa: vpa,
-          notes,
-          invoiceId: invoiceId || undefined,
-        });
+        const id = await createReceiptForOrder(payload);
         onClose();
         router.push(`/receipts/${id}`);
       } catch (e) {
-        setError(e instanceof Error ? e.message : String(e));
+        // Network-class errors → queue and let the watcher replay. Server
+        // errors (validation, permission) still surface inline.
+        const msg = e instanceof Error ? e.message : String(e);
+        const isNetwork =
+          /network|failed to fetch|offline|timeout|aborted/i.test(msg);
+        if (isNetwork) {
+          await enqueue("createReceiptForOrder", payload);
+          onClose();
+          router.push(`/orders/${orderId}`);
+          return;
+        }
+        setError(msg);
       }
     });
   }

@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
 import { GlobalBranchBadge } from "./GlobalBranchBadge";
 import { ConnectionBanner } from "./ConnectionBanner";
+import { OfflineQueueWatcher } from "./OfflineQueueWatcher";
 
 export function PhoneShell({
   children,
@@ -48,6 +49,7 @@ export function PhoneShell({
             <GlobalBranchBadge hideOnHome dropdownAlign="right" />
           </div>
           {children}
+          <OfflineQueueWatcher />
           <BottomNav />
         </div>
         <div className="home-indicator" />
