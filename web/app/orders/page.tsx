@@ -6,6 +6,7 @@ import { Card, CakeArt, StatusPill, SectionHeader, Pill } from "@/components/ui"
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate, fmtRelative } from "@/lib/format";
 import { getActiveBranchId } from "@/lib/branch-context";
+import { LocalDraftCard } from "@/components/LocalDraftCard";
 
 export const revalidate = 60;
 
@@ -52,6 +53,16 @@ export default async function OrdersPage({
   if (activeBranch) query = query.eq("branch_id", activeBranch);
   const { data: orders } = await query;
 
+  // Pulled so the local-draft card can show the picked customer's name when
+  // resolving f.customerId. Limited to the active branch.
+  let custQ = supabase.from("customers").select("id, name");
+  if (activeBranch) custQ = custQ.eq("branch_id", activeBranch);
+  const { data: branchCustomers } = await custQ;
+  const customerNameById: Record<string, string> = {};
+  for (const c of branchCustomers ?? []) {
+    if (c.id) customerNameById[c.id] = c.name ?? "";
+  }
+
   const filter = TAB_FILTERS[tab];
   const filtered = (orders ?? []).filter((o) => filter(o.status));
   const activeCount = (orders ?? []).filter((o) => TAB_FILTERS.active(o.status)).length;
@@ -90,13 +101,16 @@ export default async function OrdersPage({
         </div>
 
         <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
+          {tab === "drafts" && <LocalDraftCard customerNameById={customerNameById} />}
           {filtered.length === 0 ? (
             <Card style={{ textAlign: "center", padding: 28 }}>
               <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
-                Nothing in {tab}
+                {tab === "drafts" ? "No saved drafts" : `Nothing in ${tab}`}
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)" }}>
-                Switch to another tab or create a new order from Home.
+                {tab === "drafts"
+                  ? "Start a new order — your progress saves automatically on this device."
+                  : "Switch to another tab or create a new order from Home."}
               </div>
             </Card>
           ) : (

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { todayIst } from "@/lib/format";
+import { getActiveBranchId } from "@/lib/branch-context";
 
 import type { Customisation } from "@/lib/customisation";
 
@@ -39,7 +40,24 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
+  // Order + new customer must inherit the active branch so they show up in
+  // the branch-filtered orders list and so invoice generation (which
+  // requires branch_id) works without a manual edit afterwards.
+  const activeBranch = await getActiveBranchId();
+
   let customerId = input.customerId;
+  let customerBranchId = activeBranch;
+
+  // When picking an existing customer, prefer their branch over the active
+  // cookie — collaborative orders can be marked later via the order detail.
+  if (input.customerId) {
+    const { data: existing } = await supabase
+      .from("customers")
+      .select("branch_id")
+      .eq("id", input.customerId)
+      .maybeSingle();
+    if (existing?.branch_id) customerBranchId = existing.branch_id;
+  }
 
   if (!customerId && input.newCustomer && input.newCustomer.name) {
     const slug = input.newCustomer.name
@@ -60,6 +78,7 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
       lifetime_value: 0,
       avatar_tone: "caramel",
       marketing_consent: "N",
+      branch_id: activeBranch,
     });
     if (cErr) {
       throw new Error(`Failed to create customer: ${cErr.message}`);
@@ -97,6 +116,7 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
     channel: "manual",
     reference_count: 0,
     feedback_received: "N",
+    branch_id: customerBranchId,
   });
   if (error) {
     throw new Error(`Failed to create order: ${error.message}`);

@@ -108,21 +108,20 @@ export type BriefField =
   | "dietary"
   | "notes";
 
-// Dietary chips only surface on cake — other lines either carry the eggless
-// toggle from Step 2 (cake/cupcake) or have no realistic dietary variants
-// (brownie, tub, bomboloni). Adding it everywhere created a duplicate of
-// the dedicated Eggless toggle.
+// Brief = unpriced creative direction (chips, free text). Anything that has
+// a price (specialty shapes, toppers, dietary swaps, figurines, finishes) is
+// owned by the Addons catalogue so it can be billed. Earlier versions had
+// brief.shape / brief.topper / brief.dietary duplicating addon categories —
+// that's been pruned. brief.figurines stays as a free-text field for
+// hand-piping descriptions that don't map to a catalogue row.
 export const BRIEF_SCHEMAS: Record<string, BriefField[]> = {
   cake: [
     "occasion",
     "theme",
     "palette",
     "motif",
-    "shape",
     "message",
-    "topper",
     "figurines",
-    "dietary",
     "notes",
   ],
   cupcake: [
@@ -131,7 +130,6 @@ export const BRIEF_SCHEMAS: Record<string, BriefField[]> = {
     "palette",
     "flavor_mix",
     "liner_colour",
-    "topper",
     "message",
     "notes",
   ],
@@ -152,6 +150,8 @@ export function addonsTotal(addons: CustomisationAddon[] | null | undefined): nu
 
 export function hasCustomisation(c: Customisation | null | undefined): boolean {
   if (!c) return false;
+  // Read legacy fields (shape, topper, dietary) too so older orders that
+  // captured them before the brief was pruned still display as customised.
   const briefHas =
     !!c.brief &&
     Boolean(
@@ -159,6 +159,7 @@ export function hasCustomisation(c: Customisation | null | undefined): boolean {
         c.brief.theme ||
         (c.brief.colors && c.brief.colors.length) ||
         c.brief.shape ||
+        c.brief.topper ||
         (c.brief.message && c.brief.message.text) ||
         c.brief.figurines ||
         (c.brief.dietary && c.brief.dietary.length) ||
