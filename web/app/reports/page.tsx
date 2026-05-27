@@ -6,7 +6,9 @@ import { Card, SectionHeader, Bars, StmtRow } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney } from "@/lib/format";
 
-export const revalidate = 60;
+// Reports show monthly aggregates — 10 minutes of staleness is fine, and
+// avoids re-querying the books on every navigation back to this page.
+export const revalidate = 600;
 
 const TABS = [
   { value: "pl", label: "P & L" },

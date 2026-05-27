@@ -12,7 +12,8 @@ import { deleteRecipe } from "./actions";
 import { AttachmentGrid } from "@/components/AttachmentGrid";
 import { listAttachments } from "@/lib/attachments-actions";
 
-export const revalidate = 60;
+// Single-recipe page changes rarely; edit actions revalidate this path.
+export const revalidate = 3600;
 
 type Ingredient = { item: string; qty: string; stockKey?: string };
 

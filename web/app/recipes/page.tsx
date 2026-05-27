@@ -6,7 +6,10 @@ import { Card, CakeArt, Pill } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney } from "@/lib/format";
 
-export const revalidate = 60;
+// Recipes catalogue changes rarely — bump TTL to an hour. Admin mutations
+// already call revalidatePath('/recipes') so an edit invalidates the
+// cache immediately rather than waiting on this TTL to expire.
+export const revalidate = 3600;
 
 const TABS = [
   { value: "all", label: "All" },

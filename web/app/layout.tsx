@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, DM_Serif_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { auth, hasRole } from "@/auth";
 import { listActiveBranches } from "@/lib/branches";
 import { getActiveBranchId } from "@/lib/branch-context";
@@ -35,6 +36,8 @@ export const metadata: Metadata = {
   title: "Tiered Cake Company — Run the bakery",
   description:
     "All-in-one workspace for a Hyderabad home bakery — CRM, sales, operations, marketing, accounting and reports in one phone-first app.",
+  manifest: "/manifest.webmanifest",
+  themeColor: "#c98a3d",
 };
 
 export default async function RootLayout({
@@ -61,6 +64,7 @@ export default async function RootLayout({
       className={`${dmSans.variable} ${dmSerif.variable} ${jetBrainsMono.variable}`}
     >
       <body>
+        <ServiceWorkerRegister />
         <AppShell isAdmin={isAdmin} branches={appBranches} activeBranchId={activeBranchId}>
           {children}
         </AppShell>
