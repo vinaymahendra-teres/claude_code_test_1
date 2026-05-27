@@ -128,7 +128,7 @@ export default async function CalendarPage({
             </Link>
             <div style={{ flex: 1 }}>
               <div
-                style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}
+                style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}
               >
                 Calendar
               </div>

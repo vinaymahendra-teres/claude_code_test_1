@@ -41,7 +41,7 @@ export default async function LoginPage({
           <BrandLogo size={64} style={{ margin: "0 auto 12px" }} />
           <div
             style={{
-              fontFamily: "DM Serif Display, serif",
+              fontFamily: "var(--font-serif), DM Serif Display, serif",
               fontSize: 26,
               lineHeight: 1.15,
             }}

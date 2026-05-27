@@ -85,7 +85,7 @@ export default async function OrdersPage({
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1, paddingLeft: 0 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>Orders</div>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>Orders</div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
                 {activeCount} active
               </div>
@@ -104,7 +104,7 @@ export default async function OrdersPage({
           {tab === "drafts" && <LocalDraftCard customerNameById={customerNameById} />}
           {filtered.length === 0 ? (
             <Card style={{ textAlign: "center", padding: 28 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
                 {tab === "drafts" ? "No saved drafts" : `Nothing in ${tab}`}
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)" }}>

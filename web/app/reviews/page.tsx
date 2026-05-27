@@ -45,7 +45,7 @@ export default async function ReviewsPage() {
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Reviews
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -74,7 +74,7 @@ export default async function ReviewsPage() {
               >
                 <Icon.Check size={32} />
               </div>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 20, color: "var(--ink)" }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 20, color: "var(--ink)" }}>
                 No reviews to ask for
               </div>
               <div style={{ fontSize: 13, marginTop: 6, lineHeight: 1.5 }}>

@@ -283,7 +283,7 @@ export function NewOrderForm({
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 New order
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -946,7 +946,7 @@ function StepTheme({
 }
 
 const addonsHeader: React.CSSProperties = {
-  fontFamily: "DM Serif Display, serif",
+  fontFamily: "var(--font-serif), DM Serif Display, serif",
   fontSize: 17,
   margin: "16px 0 10px",
 };
@@ -1041,7 +1041,7 @@ function StepDelivery({
                 </div>
                 <div
                   style={{
-                    fontFamily: "DM Serif Display, serif",
+                    fontFamily: "var(--font-serif), DM Serif Display, serif",
                     fontSize: 18,
                     lineHeight: 1.1,
                     marginTop: 4,
@@ -1431,7 +1431,7 @@ function StepReview({
         <div style={{ padding: "10px 14px" }}>
           <div style={{ fontSize: 11.5, color: "var(--muted)" }}>Price</div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}>
-            <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 22 }}>
+            <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 22 }}>
               {fmtMoney(+form.price || 0)}
             </div>
             <div style={{ textAlign: "right" }}>
@@ -1483,7 +1483,7 @@ function ReviewRow({
 // ---------- shared styles ----------
 
 const stepHeading: React.CSSProperties = {
-  fontFamily: "DM Serif Display, serif",
+  fontFamily: "var(--font-serif), DM Serif Display, serif",
   fontSize: 22,
   margin: "0 0 4px",
 };

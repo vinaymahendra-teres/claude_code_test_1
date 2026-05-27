@@ -53,7 +53,7 @@ export default async function AddonsPage() {
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Customisation addons
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -119,7 +119,7 @@ export default async function AddonsPage() {
 
           {rows.length === 0 && (
             <Card style={{ textAlign: "center", padding: 28 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
                 Empty catalogue
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)" }}>

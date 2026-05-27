@@ -1,11 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAppShell, MODES } from "./AppShell";
 import { Icon } from "./Icon";
-import { MoreSheet } from "./sheets/MoreSheet";
+
+// MoreSheet only renders when the operator taps "More" — pulling it out of
+// the BottomNav chunk shaves the dropdown panel + every screen route's
+// label JSX off the initial nav payload.
+const MoreSheet = dynamic(() => import("./sheets/MoreSheet").then((m) => m.MoreSheet), {
+  ssr: false,
+});
 
 // Map nav slugs to {href, label, IconComponent}
 const NAV_DEFS: Record<

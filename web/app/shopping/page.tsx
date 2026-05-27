@@ -77,7 +77,7 @@ export default async function ShoppingPage({
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Shopping
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -101,7 +101,7 @@ export default async function ShoppingPage({
         <div style={{ padding: "12px 18px 100px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {rows.length === 0 ? (
             <Card style={{ textAlign: "center", padding: 28 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
                 Nothing {tab}
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)" }}>

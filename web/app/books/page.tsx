@@ -66,7 +66,7 @@ export default async function BooksPage({
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Books
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>May 2026</div>
@@ -132,7 +132,7 @@ function Overview({
           <div style={{ fontSize: 11.5, opacity: 0.6, letterSpacing: "0.06em", textTransform: "uppercase" }}>
             Net profit · May (partial)
           </div>
-          <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 36, marginTop: 4 }}>
+          <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 36, marginTop: 4 }}>
             {fmtMoney(may.profit)}
           </div>
           <div style={{ fontSize: 12, opacity: 0.7, marginTop: 2 }}>
@@ -149,7 +149,7 @@ function Overview({
             <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--ok)" }} />
             Income
           </div>
-          <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 22, marginTop: 4 }}>
+          <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 22, marginTop: 4 }}>
             {fmtCompactMoney(may.income)}
           </div>
           <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>from orders</div>
@@ -159,7 +159,7 @@ function Overview({
             <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--rose)" }} />
             Expense
           </div>
-          <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 22, marginTop: 4 }}>
+          <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 22, marginTop: 4 }}>
             {fmtCompactMoney(may.expense)}
           </div>
           <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>
@@ -402,7 +402,7 @@ function TaxView({
           >
             Advance tax · Q1 FY26
           </div>
-          <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 30, marginTop: 4 }}>
+          <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 30, marginTop: 4 }}>
             {fmtMoney(38420)}
           </div>
           <div style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 2 }}>

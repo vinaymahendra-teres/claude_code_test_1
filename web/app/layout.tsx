@@ -1,9 +1,35 @@
 import type { Metadata } from "next";
+import { DM_Sans, DM_Serif_Display, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 import { auth, hasRole } from "@/auth";
 import { listActiveBranches } from "@/lib/branches";
 import { getActiveBranchId } from "@/lib/branch-context";
+
+// Fonts: downloaded at build time and served from /_next/static — no
+// runtime fetch to fonts.googleapis.com / fonts.gstatic.com. Latin-only
+// subset; swap-display so first paint isn't blocked on font download.
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-sans",
+});
+
+const dmSerif = DM_Serif_Display({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-serif",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
   title: "Tiered Cake Company — Run the bakery",
@@ -30,15 +56,10 @@ export default async function RootLayout({
   }));
 
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`${dmSans.variable} ${dmSerif.variable} ${jetBrainsMono.variable}`}
+    >
       <body>
         <AppShell isAdmin={isAdmin} branches={appBranches} activeBranchId={activeBranchId}>
           {children}

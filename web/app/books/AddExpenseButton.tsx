@@ -123,7 +123,7 @@ export function AddExpenseButton() {
                 fontSize: 22,
                 padding: "14px 12px 14px 30px",
                 fontWeight: 600,
-                fontFamily: "DM Serif Display, serif",
+                fontFamily: "var(--font-serif), DM Serif Display, serif",
               }}
             />
           </Field>

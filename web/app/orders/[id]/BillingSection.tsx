@@ -64,7 +64,7 @@ export function BillingSection({
             <div style={{ fontSize: 11.5, color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
               Balance due
             </div>
-            <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 22, color: balance > 0 ? "var(--danger)" : "var(--ok)" }}>
+            <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 22, color: balance > 0 ? "var(--danger)" : "var(--ok)" }}>
               {fmtMoney(balance)}
             </div>
           </div>
@@ -228,7 +228,7 @@ function RecordPaymentSheet({
               fontSize: 22,
               padding: "14px 12px",
               fontWeight: 600,
-              fontFamily: "DM Serif Display, serif",
+              fontFamily: "var(--font-serif), DM Serif Display, serif",
             }}
           />
         </FieldLite>

@@ -6,8 +6,17 @@ import { PhoneShell } from "@/components/PhoneShell";
 import { Card, CakeArt, StatusPill, SectionHeader, Pill, Avatar } from "@/components/ui";
 import { Icon } from "@/components/Icon";
 import { fmtMoney, fmtDate } from "@/lib/format";
+import nextDynamic from "next/dynamic";
 import { advanceStage } from "./actions";
-import { EditOrderSheet } from "./EditOrderSheet";
+
+// Edit sheet only renders after the operator taps Edit — keep its picker
+// chrome (date grid, customer search, brief inputs) out of the initial
+// order-detail bundle. Dynamic without `ssr: false` because Server
+// Components don't allow that option; still code-splits into its own
+// chunk so the client only downloads it when the route hydrates.
+const EditOrderSheet = nextDynamic(() =>
+  import("./EditOrderSheet").then((m) => m.EditOrderSheet),
+);
 import { AttachmentGrid } from "@/components/AttachmentGrid";
 import { listAttachments } from "@/lib/attachments-actions";
 import { CustomisationSection } from "./CustomisationSection";
@@ -106,7 +115,7 @@ export default async function OrderDetailPage({
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 #{order.id.replace(/^o-?/, "")}
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -126,7 +135,7 @@ export default async function OrderDetailPage({
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
             <div style={{ flex: 1 }}>
-              <h2 style={{ fontFamily: "DM Serif Display, serif", fontSize: 22, margin: 0, lineHeight: 1.2 }}>
+              <h2 style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 22, margin: 0, lineHeight: 1.2 }}>
                 {order.title || "Order"}
               </h2>
               <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>
@@ -134,7 +143,7 @@ export default async function OrderDetailPage({
               </div>
             </div>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 22 }}>{fmtMoney(order.price ?? 0)}</div>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 22 }}>{fmtMoney(order.price ?? 0)}</div>
               {(order.balance ?? 0) > 0 && (
                 <div style={{ fontSize: 11, color: "var(--danger)", fontWeight: 600 }}>{fmtMoney(order.balance ?? 0)} due</div>
               )}
@@ -332,7 +341,7 @@ export default async function OrderDetailPage({
                   color: "var(--caramel-deep)",
                   display: "grid",
                   placeItems: "center",
-                  fontFamily: "DM Serif Display, serif",
+                  fontFamily: "var(--font-serif), DM Serif Display, serif",
                   lineHeight: 1,
                   flexShrink: 0,
                 }}
@@ -397,7 +406,7 @@ export default async function OrderDetailPage({
                 {order.upi_reference_utr ? (
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 11.5, color: "var(--muted)" }}>
                     <span>UTR · {order.payer_vpa || "VPA not captured"}</span>
-                    <span style={{ fontFamily: "JetBrains Mono, monospace", color: "var(--ink-soft)" }}>
+                    <span style={{ fontFamily: "var(--font-mono), JetBrains Mono, monospace", color: "var(--ink-soft)" }}>
                       {order.upi_reference_utr}
                     </span>
                   </div>
@@ -434,7 +443,7 @@ export default async function OrderDetailPage({
               <span style={{ fontSize: 13, fontWeight: 600 }}>Balance due</span>
               <span
                 style={{
-                  fontFamily: "DM Serif Display, serif",
+                  fontFamily: "var(--font-serif), DM Serif Display, serif",
                   fontSize: 18,
                   color: (order.balance ?? 0) > 0 ? "var(--ink)" : "var(--ok)",
                 }}

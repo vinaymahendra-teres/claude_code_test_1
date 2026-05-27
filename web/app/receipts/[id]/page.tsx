@@ -99,7 +99,7 @@ export default async function ReceiptPage({
           </div>
           <div
             style={{
-              fontFamily: "DM Serif Display, serif",
+              fontFamily: "var(--font-serif), DM Serif Display, serif",
               fontSize: 40,
               color: "#7a5400",
               marginTop: 4,
@@ -183,7 +183,7 @@ const pageStyle: React.CSSProperties = {
   borderRadius: 14,
   boxShadow: "0 8px 30px oklch(0.35 0.06 50 / 0.10)",
   padding: 32,
-  fontFamily: "DM Sans, system-ui, sans-serif",
+  fontFamily: "var(--font-sans), DM Sans, system-ui, sans-serif",
   color: "#1a1814",
 };
 
@@ -196,7 +196,7 @@ const headerStyle: React.CSSProperties = {
 };
 
 const brandName: React.CSSProperties = {
-  fontFamily: "DM Serif Display, serif",
+  fontFamily: "var(--font-serif), DM Serif Display, serif",
   fontSize: 20,
   lineHeight: 1.1,
 };
@@ -215,7 +215,7 @@ const badgeLabel: React.CSSProperties = {
 };
 
 const number: React.CSSProperties = {
-  fontFamily: "DM Serif Display, serif",
+  fontFamily: "var(--font-serif), DM Serif Display, serif",
   fontSize: 22,
   lineHeight: 1.15,
 };
@@ -235,7 +235,7 @@ const sectionLabel: React.CSSProperties = {
 };
 
 const partyName: React.CSSProperties = {
-  fontFamily: "DM Serif Display, serif",
+  fontFamily: "var(--font-serif), DM Serif Display, serif",
   fontSize: 16,
   lineHeight: 1.2,
 };

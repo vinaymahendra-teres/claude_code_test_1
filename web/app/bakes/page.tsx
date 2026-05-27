@@ -82,7 +82,7 @@ export default async function BakesPage() {
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Bakes
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -130,7 +130,7 @@ export default async function BakesPage() {
                   <div>
                     <span
                       style={{
-                        fontFamily: "DM Serif Display, serif",
+                        fontFamily: "var(--font-serif), DM Serif Display, serif",
                         fontSize: 17,
                         marginRight: 8,
                       }}
@@ -189,7 +189,7 @@ export default async function BakesPage() {
                             >
                               <div
                                 style={{
-                                  fontFamily: "DM Serif Display, serif",
+                                  fontFamily: "var(--font-serif), DM Serif Display, serif",
                                   fontSize: 15,
                                   lineHeight: 1,
                                 }}

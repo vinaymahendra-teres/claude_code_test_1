@@ -109,7 +109,7 @@ export function ConfirmDelete({
             autoFocus
             style={{
               width: "100%",
-              fontFamily: "JetBrains Mono, monospace",
+              fontFamily: "var(--font-mono), JetBrains Mono, monospace",
               fontSize: 14,
               padding: "11px 12px",
               border: "1px solid " + (error ? "var(--danger)" : "var(--line)"),

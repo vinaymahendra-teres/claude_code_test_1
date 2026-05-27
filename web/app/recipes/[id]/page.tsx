@@ -91,7 +91,7 @@ export default async function RecipeDetailPage({
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 {r.name}
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -203,7 +203,7 @@ export default async function RecipeDetailPage({
                           style={{
                             fontSize: 12.5,
                             color: "var(--ink-soft)",
-                            fontFamily: "JetBrains Mono, monospace",
+                            fontFamily: "var(--font-mono), JetBrains Mono, monospace",
                           }}
                         >
                           {ing.qty}
@@ -227,7 +227,7 @@ export default async function RecipeDetailPage({
                 >
                   <h3
                     style={{
-                      fontFamily: "DM Serif Display, serif",
+                      fontFamily: "var(--font-serif), DM Serif Display, serif",
                       fontSize: 15,
                       fontWeight: 400,
                       margin: 0,

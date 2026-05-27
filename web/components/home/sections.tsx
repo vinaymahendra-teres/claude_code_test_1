@@ -68,7 +68,7 @@ export function Hero({ data }: { data: HomeData }) {
           This week
         </div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 4 }}>
-          <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 34, lineHeight: 1 }}>
+          <span style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 34, lineHeight: 1 }}>
             {fmtMoney(data.weekRevenue)}
           </span>
           <span style={{ fontSize: 13, opacity: 0.7 }}>booked</span>
@@ -468,7 +468,7 @@ function Tile({ label, value, fg }: { label: string; value: string; fg: string }
       <div style={{ fontSize: 10.5, color: "var(--muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
         {label}
       </div>
-      <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18, color: fg, marginTop: 4 }}>
+      <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 18, color: fg, marginTop: 4 }}>
         {value}
       </div>
     </div>
@@ -485,7 +485,7 @@ export function Outstanding({ data }: { data: HomeData }) {
       <Card padding={0}>
         <div style={{ padding: "10px 14px", borderBottom: "1px solid var(--line-soft)" }}>
           <div style={{ fontSize: 11.5, color: "var(--muted)" }}>Total due</div>
-          <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 22, color: "var(--danger)" }}>
+          <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 22, color: "var(--danger)" }}>
             {fmtMoney(total)}
           </div>
         </div>
@@ -588,7 +588,7 @@ function Section({
       >
         <h3
           style={{
-            fontFamily: "DM Serif Display, serif",
+            fontFamily: "var(--font-serif), DM Serif Display, serif",
             fontSize: 15,
             fontWeight: 400,
             margin: 0,
@@ -625,7 +625,7 @@ const slotBadge: React.CSSProperties = {
   background: "var(--surface-3)",
   borderRadius: 10,
   padding: "5px 0",
-  fontFamily: "DM Serif Display, serif",
+  fontFamily: "var(--font-serif), DM Serif Display, serif",
   fontSize: 14,
   lineHeight: 1,
   flexShrink: 0,

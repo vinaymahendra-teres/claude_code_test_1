@@ -49,7 +49,7 @@ export default async function ReportsPage({
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Reports
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -150,7 +150,7 @@ function ProfitLoss({
           <div style={{ fontSize: 11.5, opacity: 0.6, letterSpacing: "0.06em", textTransform: "uppercase" }}>
             Profit &amp; Loss · YTD FY26
           </div>
-          <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 34, marginTop: 4, lineHeight: 1 }}>
+          <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 34, marginTop: 4, lineHeight: 1 }}>
             {fmtMoney(netProfit)}
           </div>
           <div style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>net profit before tax · 1 Apr – 24 May 2026</div>
@@ -178,7 +178,7 @@ function ProfitLoss({
               }}
             >
               <span>less ingredient COGS</span>
-              <span style={{ fontFamily: "JetBrains Mono, monospace" }}>−{fmtMoney(r.cogs)}</span>
+              <span style={{ fontFamily: "var(--font-mono), JetBrains Mono, monospace" }}>−{fmtMoney(r.cogs)}</span>
             </div>
             <div
               style={{
@@ -191,7 +191,7 @@ function ProfitLoss({
               }}
             >
               <span style={{ color: "var(--ink-soft)" }}>Gross margin</span>
-              <span style={{ fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>
+              <span style={{ fontWeight: 600, fontFamily: "var(--font-mono), JetBrains Mono, monospace" }}>
                 {fmtMoney(r.gross)}{" "}
                 <span style={{ color: "var(--muted)", fontWeight: 400 }}>· {r.marginPct.toFixed(0)}%</span>
               </span>
@@ -274,7 +274,7 @@ function BalanceSheet({
           <div style={{ fontSize: 11.5, opacity: 0.6, letterSpacing: "0.06em", textTransform: "uppercase" }}>
             Balance Sheet · as of 24 May 2026
           </div>
-          <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 34, marginTop: 4, lineHeight: 1 }}>
+          <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 34, marginTop: 4, lineHeight: 1 }}>
             {fmtMoney(totalEquity)}
           </div>
           <div style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>net worth · book value</div>
@@ -390,7 +390,7 @@ function CashFlow({
           <div style={{ fontSize: 11.5, opacity: 0.6, letterSpacing: "0.06em", textTransform: "uppercase" }}>
             Net change in cash · YTD FY26
           </div>
-          <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 34, marginTop: 4, lineHeight: 1 }}>
+          <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 34, marginTop: 4, lineHeight: 1 }}>
             {netChange >= 0 ? "+" : ""}
             {fmtMoney(netChange)}
           </div>

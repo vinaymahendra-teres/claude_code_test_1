@@ -432,7 +432,7 @@ export function Sheet({
               flexShrink: 0,
             }}
           >
-            <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18 }}>{title}</div>
+            <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 18 }}>{title}</div>
             <IconButton onClick={onClose}>
               <Icon.X size={20} />
             </IconButton>

@@ -205,7 +205,7 @@ export function CakeArt({
           inset: 0,
           display: "grid",
           placeItems: "center",
-          fontFamily: "JetBrains Mono, monospace",
+          fontFamily: "var(--font-mono), JetBrains Mono, monospace",
           fontSize: Math.max(9, size * 0.13),
           color: "oklch(0.30 0.05 50 / 0.55)",
           textAlign: "center",
@@ -239,7 +239,7 @@ export function SectionHeader({
     >
       <h3
         style={{
-          fontFamily: "DM Serif Display, serif",
+          fontFamily: "var(--font-serif), DM Serif Display, serif",
           fontSize: 15,
           fontWeight: 400,
           margin: 0,
@@ -392,7 +392,7 @@ export function StmtRow({
         style={{
           fontSize: bold ? 14 : 13,
           fontWeight: bold ? 700 : 500,
-          fontFamily: "JetBrains Mono, monospace",
+          fontFamily: "var(--font-mono), JetBrains Mono, monospace",
           color: typeof value === "number" && value < 0 ? "var(--danger)" : "var(--ink)",
         }}
       >
@@ -440,7 +440,7 @@ export function StatTile({
       </div>
       <div
         style={{
-          fontFamily: "DM Serif Display, serif",
+          fontFamily: "var(--font-serif), DM Serif Display, serif",
           fontSize: 22,
           marginTop: 4,
           lineHeight: 1,

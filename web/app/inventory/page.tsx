@@ -75,7 +75,7 @@ export default async function InventoryPage({
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Inventory
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -160,7 +160,7 @@ export default async function InventoryPage({
                                 fontSize: 13,
                                 fontWeight: 600,
                                 color: low ? "var(--danger)" : "var(--ink)",
-                                fontFamily: "JetBrains Mono, monospace",
+                                fontFamily: "var(--font-mono), JetBrains Mono, monospace",
                               }}
                             >
                               {item.qty}

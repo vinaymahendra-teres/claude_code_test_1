@@ -46,7 +46,7 @@ export default function ToolsPage() {
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Tools
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -586,7 +586,7 @@ function YeastConverter() {
               }}
             >
               <span>{LABEL[k]}</span>
-              <span style={{ fontFamily: "DM Serif Display, serif", fontSize: 18 }}>
+              <span style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 18 }}>
                 {grams != null ? formatNum(grams * ratio) : "—"} g
               </span>
             </div>
@@ -632,7 +632,7 @@ function ResultCard({
       <div style={uppercase(tone)}>{label}</div>
       <div
         style={{
-          fontFamily: "DM Serif Display, serif",
+          fontFamily: "var(--font-serif), DM Serif Display, serif",
           fontSize: 36,
           color: p.fg,
           marginTop: 4,
@@ -800,7 +800,7 @@ const bigInput: React.CSSProperties = {
   fontSize: 22,
   padding: "14px 12px",
   fontWeight: 600,
-  fontFamily: "DM Serif Display, serif",
+  fontFamily: "var(--font-serif), DM Serif Display, serif",
 };
 
 const selectStyle: React.CSSProperties = {
@@ -837,7 +837,7 @@ const segItem: React.CSSProperties = {
 const refValue: React.CSSProperties = {
   fontSize: 12.5,
   color: "var(--ink-soft)",
-  fontFamily: "JetBrains Mono, monospace",
+  fontFamily: "var(--font-mono), JetBrains Mono, monospace",
 };
 
 const chromeHeader: React.CSSProperties = {

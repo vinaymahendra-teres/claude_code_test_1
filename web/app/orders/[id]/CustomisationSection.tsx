@@ -353,7 +353,7 @@ function BriefSummary({ brief }: { brief: CustomisationBrief }) {
 }
 
 const sectionLabel: React.CSSProperties = {
-  fontFamily: "DM Serif Display, serif",
+  fontFamily: "var(--font-serif), DM Serif Display, serif",
   fontSize: 17,
   margin: "12px 0 10px",
 };

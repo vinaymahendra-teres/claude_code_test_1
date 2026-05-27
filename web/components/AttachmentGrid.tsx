@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Sheet, TextInput, Button } from "@/components/ui-client";
 import { Icon } from "@/components/Icon";
@@ -88,17 +89,14 @@ export function AttachmentGrid({
               position: "relative",
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={a.url}
               alt={a.caption ?? ""}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
-              }}
+              fill
+              sizes="(max-width: 390px) 120px, 160px"
+              style={{ objectFit: "cover" }}
               loading="lazy"
+              unoptimized={!a.url.startsWith("https://")}
             />
             {a.caption && (
               <div
@@ -260,11 +258,13 @@ function AttachmentViewer({
             marginBottom: 14,
           }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={attachment.url}
             alt={attachment.caption ?? ""}
-            style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+            fill
+            sizes="390px"
+            style={{ objectFit: "contain" }}
+            unoptimized={!attachment.url.startsWith("https://")}
           />
         </div>
 

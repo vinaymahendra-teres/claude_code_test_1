@@ -122,7 +122,7 @@ export function CalendarView({
         <Link href={`/calendar?month=${prevMonth}`} style={chevBtn} aria-label="Previous month">
           <Icon.ChevronLeft size={16} />
         </Link>
-        <div style={{ flex: 1, fontFamily: "DM Serif Display, serif", fontSize: 17, textAlign: "center" }}>
+        <div style={{ flex: 1, fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 17, textAlign: "center" }}>
           {new Intl.DateTimeFormat("en-IN", {
             timeZone: "Asia/Kolkata",
             month: "long",
@@ -333,7 +333,7 @@ export function CalendarView({
             >
               <h3
                 style={{
-                  fontFamily: "DM Serif Display, serif",
+                  fontFamily: "var(--font-serif), DM Serif Display, serif",
                   fontSize: 15,
                   fontWeight: 400,
                   margin: 0,

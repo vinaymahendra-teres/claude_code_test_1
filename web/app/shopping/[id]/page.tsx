@@ -91,7 +91,7 @@ export default async function ShoppingListDetail({
             <div style={{ flex: 1, minWidth: 0 }}>
               <div
                 style={{
-                  fontFamily: "DM Serif Display, serif",
+                  fontFamily: "var(--font-serif), DM Serif Display, serif",
                   fontSize: 21,
                   lineHeight: 1.15,
                   whiteSpace: "nowrap",
@@ -144,7 +144,7 @@ export default async function ShoppingListDetail({
                 </div>
                 <div
                   style={{
-                    fontFamily: "DM Serif Display, serif",
+                    fontFamily: "var(--font-serif), DM Serif Display, serif",
                     fontSize: 18,
                     marginTop: 2,
                     textTransform: "capitalize",
@@ -183,7 +183,7 @@ export default async function ShoppingListDetail({
 
           {rows.length === 0 ? (
             <Card style={{ textAlign: "center", padding: 28, marginTop: 14 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 18, marginBottom: 6 }}>
                 Empty list
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)" }}>

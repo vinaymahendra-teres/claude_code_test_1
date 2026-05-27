@@ -115,7 +115,7 @@ export default async function CustomerDetailPage({
               size={84}
               style={{ margin: "0 auto 12px", fontSize: 28 }}
             />
-            <h2 style={{ fontFamily: "DM Serif Display, serif", fontSize: 24, margin: 0 }}>{c.name}</h2>
+            <h2 style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 24, margin: 0 }}>{c.name}</h2>
             <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>
               {c.area}
               {c.since && ` · since ${fmtDate(c.since, { showYear: true })}`}
@@ -467,7 +467,7 @@ function StatLine({ label, value }: { label: string; value: string }) {
       >
         {label}
       </div>
-      <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 22, marginTop: 4 }}>{value}</div>
+      <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 22, marginTop: 4 }}>{value}</div>
     </>
   );
 }

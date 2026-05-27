@@ -1,10 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { ModePill } from "@/components/ModePill";
 import { Icon } from "@/components/Icon";
-import { TweaksSheet } from "@/components/sheets/TweaksSheet";
 import { GlobalBranchBadge } from "@/components/GlobalBranchBadge";
+
+// TweaksSheet only renders when the operator taps the sparkle button —
+// keep it out of the home-page chunk.
+const TweaksSheet = dynamic(
+  () => import("@/components/sheets/TweaksSheet").then((m) => m.TweaksSheet),
+  { ssr: false },
+);
 
 export function HomeHeader({
   dateLabel,
@@ -65,7 +72,7 @@ export function HomeHeader({
 
         <div
           style={{
-            fontFamily: "DM Serif Display, serif",
+            fontFamily: "var(--font-serif), DM Serif Display, serif",
             fontSize: 24,
             lineHeight: 1.15,
           }}

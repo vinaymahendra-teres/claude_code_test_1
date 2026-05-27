@@ -87,7 +87,7 @@ export function EditTimerSheet({
               fontSize: 22,
               padding: "14px 12px",
               fontWeight: 600,
-              fontFamily: "DM Serif Display, serif",
+              fontFamily: "var(--font-serif), DM Serif Display, serif",
             }}
           />
         </Field>

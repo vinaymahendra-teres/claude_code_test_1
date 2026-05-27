@@ -2,7 +2,10 @@
 // mark that consumers can drop into headers, invoices, login, etc.
 //
 // Logo asset lives at /public/logo.jpg (referenced from globals.css too).
+// next/image transcodes to WebP/AVIF + responsive srcset, which on a slow
+// connection is the difference between a 50 KB and a 5 KB fetch.
 
+import Image from "next/image";
 import type { CSSProperties } from "react";
 
 export function BrandLogo({
@@ -26,12 +29,12 @@ export function BrandLogo({
         ...style,
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src="/logo.jpg"
         alt="Tiered Cake Company"
         width={size}
         height={size}
+        priority={size >= 64}
         style={{
           width: size,
           height: size,
@@ -46,7 +49,7 @@ export function BrandLogo({
       {showWordmark && (
         <div
           style={{
-            fontFamily: "DM Serif Display, serif",
+            fontFamily: "var(--font-serif), DM Serif Display, serif",
             fontSize: Math.max(16, Math.round(size * 0.42)),
             color: "var(--ink)",
             lineHeight: 1.1,

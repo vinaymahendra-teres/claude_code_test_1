@@ -511,7 +511,7 @@ function NewTimerForm({
             fontSize: 22,
             padding: "14px 12px",
             fontWeight: 600,
-            fontFamily: "DM Serif Display, serif",
+            fontFamily: "var(--font-serif), DM Serif Display, serif",
           }}
         />
       </Field>
@@ -565,7 +565,7 @@ export default function KitchenPage() {
               <Icon.ChevronLeft size={22} />
             </Link>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 21, lineHeight: 1.15 }}>
                 Kitchen
               </div>
               <div style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 2 }}>
@@ -605,7 +605,7 @@ export default function KitchenPage() {
               >
                 <Icon.Clock size={32} />
               </div>
-              <div style={{ fontFamily: "DM Serif Display, serif", fontSize: 20, color: "var(--ink)" }}>
+              <div style={{ fontFamily: "var(--font-serif), DM Serif Display, serif", fontSize: 20, color: "var(--ink)" }}>
                 No timers yet
               </div>
               <div style={{ fontSize: 13, marginTop: 6 }}>
