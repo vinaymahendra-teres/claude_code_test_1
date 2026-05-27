@@ -40,12 +40,17 @@ export default async function CustomersPage({
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
+  // Cap at 500 — well above any realistic active CRM size for a home
+  // bakery, and prevents the list page from ever streaming an unbounded
+  // table on a slow connection.
   const [{ data: customers }, branchRows] = await Promise.all([
     supabase
       .from("customers")
       .select(
         "id, name, area, tags, order_count, lifetime_value, last_order, avatar_tone, marketing_consent, branch_id",
-      ),
+      )
+      .order("last_order", { ascending: false, nullsFirst: false })
+      .limit(500),
     listActiveBranches(),
   ]);
   const branchOptions = branchRows.map((b) => ({

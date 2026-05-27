@@ -44,12 +44,16 @@ export default async function OrdersPage({
   const supabase = createClient(cookieStore);
   const activeBranch = await getActiveBranchId();
 
+  // Hard cap at 200 rows — operators almost never page past today + 2 weeks
+  // out, and the page groups by delivery_date anyway. Stops a runaway list
+  // from re-streaming hundreds of rows on every tab back-nav.
   let query = supabase
     .from("orders")
     .select(
       "id, customer_id, title, flavor, price, delivery_date, delivery_slot, delivery_area, status, branch_id, customers (name, avatar_tone)",
     )
-    .order("delivery_date", { ascending: true });
+    .order("delivery_date", { ascending: true })
+    .limit(200);
   if (activeBranch) query = query.eq("branch_id", activeBranch);
   const { data: orders } = await query;
 

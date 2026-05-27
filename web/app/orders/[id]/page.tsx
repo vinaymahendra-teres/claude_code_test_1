@@ -85,7 +85,7 @@ export default async function OrderDetailPage({
       listAttachments("order", order.id),
       supabase
         .from("customisation_addons")
-        .select("*")
+        .select("id, category, name, default_qty, default_cost, notes, is_active, sort_order")
         .eq("is_active", true)
         .order("sort_order"),
       supabase
